@@ -1,5 +1,6 @@
 SPR_SIZE = 16
 require("util")
+Pattern = require("pattern")
 Player = require("player")
 Enemy = require("enemy")
 Bullet = require("bullet")
