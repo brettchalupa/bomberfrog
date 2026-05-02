@@ -1,30 +1,46 @@
+local Pattern = require("pattern") -- NOTE: required before enemy since enemy relies upon it
+
 local M = {}
 
 local HIT_FLASH_TIME = 0.1 -- s
 local PARTICLE_COUNT = 24
 local PARTICLE_SIZE = 2
 
--- a sequence is an array of phases
-local SEQUENCE = {
-  { fn = Pattern.fire_aimed,  params = {},                     count = 6, delay = 0.1, start_gap = 1 },
-  { fn = Pattern.fire_ring,   params = { n = 12 },             count = 2, delay = 0.8, start_gap = 2 },
-  { fn = Pattern.fire_spiral, params = { n = 12, spin = 0.3 }, count = 3, delay = 0.2, start_gap = 3 },
+M.kind = {
+  popcorn = {
+    hp = 100,
+    r = 7,
+    sequence = {
+      { fn = Pattern.fire_aimed, params = {}, count = 6, delay = 0.1, start_gap = 1 },
+    }
+  },
+  boss = {
+    hp = 200,
+    r = 12,
+    sequence = {
+      { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 1.5 },
+      { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 0.5 },
+      { fn = Pattern.fire_ring,   params = { n = 12 },             count = 5,  delay = 0.08, start_gap = 3 },
+      { fn = Pattern.fire_spiral, params = { n = 6, spin = 0.15 }, count = 10, delay = 0.04, start_gap = 6 },
+    }
+  }
 }
 
-function M.init(x, y)
-  local first_phase = SEQUENCE[1]
+function M.init(kind, x, y)
+  local sequence = kind.sequence
+  local first_phase = sequence[1]
   return {
-    hp = 100,
+    hp = kind.hp,
     alive = true,
     x = x,
     y = y,
-    r = 10,
+    r = kind.r,
     hit_timer = 0,
     particles = {},
     bullets = {},
     fire_countdown = first_phase.start_gap, -- counts down until next shot; secs
     spiral_angle = 0,
-    sequence = SEQUENCE,
+    sequence = sequence,
     sequence_idx = 1,
     pattern_shots_remaining = first_phase.count,
   }
@@ -58,7 +74,6 @@ function M.dead(e)
 end
 
 local function advance_phase(e)
-  e.spiral_angle = 0
   e.sequence_idx += 1
 
   if e.sequence_idx > #e.sequence then
@@ -67,6 +82,10 @@ local function advance_phase(e)
 
   local phase = e.sequence[e.sequence_idx]
   assert(phase, "expected non-nil phase when advancing sequence")
+
+  if phase.fn == Pattern.fire_spiral then
+    e.spiral_angle = 0
+  end
 
   e.fire_countdown = phase.start_gap
   e.pattern_shots_remaining = phase.count

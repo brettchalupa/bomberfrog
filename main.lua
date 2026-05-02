@@ -1,6 +1,5 @@
 SPR_SIZE = 16
 require("util")
-Pattern = require("pattern")
 Player = require("player")
 Enemy = require("enemy")
 Bullet = require("bullet")
@@ -11,9 +10,9 @@ end
 
 local function init_enemies()
   return {
-    Enemy.init(usagi.GAME_W - 44, 60),
-    Enemy.init(usagi.GAME_W - 44, 120),
-    Enemy.init(usagi.GAME_W - 80, 90)
+    Enemy.init(Enemy.kind.popcorn, usagi.GAME_W - 80, 60),
+    Enemy.init(Enemy.kind.popcorn, usagi.GAME_W - 80, 120),
+    Enemy.init(Enemy.kind.boss, usagi.GAME_W - 44, 90)
   }
 end
 
@@ -36,7 +35,7 @@ function _update(dt)
       for j = 1, #state.enemies do
         local e = state.enemies[j]
 
-        if e.alive and circs_overlap(b, e) then
+        if b.alive and e.alive and circs_overlap(b, e) then
           b.alive = false
           Enemy.hit(e)
         end
