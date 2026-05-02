@@ -56,6 +56,73 @@ function M.dead(e)
   return e.hp > 0
 end
 
+local function fire_aimed(e, p)
+  local a = math.atan(p.y - e.y, p.x - e.x)
+  vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
+  -- TODO: DRY UP
+  table.insert(e.bullets, Bullet.fire(e.x, e.y, vel, Bullet.kind.ENEMY))
+  if e.shots_left_in_pattern == 0 then
+    e.next_shot_pattern = PATTERN.RING
+    e.fire_delay = .8
+    e.fire_countdown = 2
+    e.shots_left_in_pattern = 2
+  else
+    e.shots_left_in_pattern -= 1
+  end
+end
+
+local function fire_ring(e, _p)
+  local n = 12
+  for i = 1, n do
+    local a = (i / n) * math.pi * 2
+    vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
+    -- TODO: DRY UP
+    table.insert(e.bullets, Bullet.fire(e.x, e.y, vel, Bullet.kind.ENEMY))
+  end
+  if e.shots_left_in_pattern == 0 then
+    e.next_shot_pattern = PATTERN.SPIRAL
+    e.fire_delay = 0.2
+    e.fire_countdown = 3
+    e.shots_left_in_pattern = 4
+  else
+    e.shots_left_in_pattern -= 1
+  end
+end
+
+local function fire_spiral(e, _p)
+  local n = 12
+  for i = 1, n do
+    local a = e.spiral_angle + (i / n) * math.pi * 2
+    vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
+    -- TODO: DRY UP
+    table.insert(e.bullets, Bullet.fire(e.x, e.y, vel, Bullet.kind.ENEMY))
+  end
+  e.spiral_angle += 0.3
+
+  if e.shots_left_in_pattern == 0 then
+    e.next_shot_pattern = PATTERN.AIMED
+    e.fire_delay = 1.5
+    e.shots_left_in_pattern = 2
+    e.fire_countdown = 1
+  else
+    e.shots_left_in_pattern -= 1
+  end
+end
+
+local function fire_bullet(e, p)
+  e.fire_countdown = e.fire_delay
+  local vel = { x = -BULLET_SPEED, y = 0 }
+  if p then
+    if e.next_shot_pattern == PATTERN.AIMED then
+      fire_aimed(e, p)
+    elseif e.next_shot_pattern == PATTERN.RING then
+      fire_ring(e, p)
+    elseif e.next_shot_pattern == PATTERN.SPIRAL then
+      fire_spiral(e, p)
+    end
+  end
+end
+
 function M.update(dt, e, p)
   if e.hit_timer > 0 then
     e.hit_timer -= dt
@@ -77,58 +144,7 @@ function M.update(dt, e, p)
     end
 
     if e.fire_countdown <= 0 then
-      e.fire_countdown = e.fire_delay
-      local vel = { x = -BULLET_SPEED, y = 0 }
-      if p then
-        if e.next_shot_pattern == PATTERN.AIMED then
-          local a = math.atan(p.y - e.y, p.x - e.x)
-          vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
-          -- TODO: DRY UP
-          table.insert(e.bullets, Bullet.fire(e.x, e.y, vel, Bullet.kind.ENEMY))
-          if e.shots_left_in_pattern == 0 then
-            e.next_shot_pattern = PATTERN.RING
-            e.fire_delay = .8
-            e.fire_countdown = 2
-            e.shots_left_in_pattern = 2
-          else
-            e.shots_left_in_pattern -= 1
-          end
-        elseif e.next_shot_pattern == PATTERN.RING then
-          local n = 12
-          for i = 1, n do
-            local a = (i / n) * math.pi * 2
-            vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
-            -- TODO: DRY UP
-            table.insert(e.bullets, Bullet.fire(e.x, e.y, vel, Bullet.kind.ENEMY))
-          end
-          if e.shots_left_in_pattern == 0 then
-            e.next_shot_pattern = PATTERN.SPIRAL
-            e.fire_delay = 0.2
-            e.fire_countdown = 3
-            e.shots_left_in_pattern = 4
-          else
-            e.shots_left_in_pattern -= 1
-          end
-        elseif e.next_shot_pattern == PATTERN.SPIRAL then
-          local n = 12
-          for i = 1, n do
-            local a = e.spiral_angle + (i / n) * math.pi * 2
-            vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
-            -- TODO: DRY UP
-            table.insert(e.bullets, Bullet.fire(e.x, e.y, vel, Bullet.kind.ENEMY))
-          end
-          e.spiral_angle += 0.3
-
-          if e.shots_left_in_pattern == 0 then
-            e.next_shot_pattern = PATTERN.AIMED
-            e.fire_delay = 1.5
-            e.shots_left_in_pattern = 2
-            e.fire_countdown = 1
-          else
-            e.shots_left_in_pattern -= 1
-          end
-        end
-      end
+      fire_bullet(e, p)
     end
 
     for i = #e.bullets, 1, -1 do
