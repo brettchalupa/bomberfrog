@@ -35,6 +35,7 @@ end
 
 function M.init()
   return {
+    alive = true,
     x = 32,
     y = usagi.GAME_H / 2 - SPR_SIZE / 2,
     speed = 120,       -- px/s
@@ -51,6 +52,10 @@ end
 
 function M.update(dt, p)
   assert(p, "player `p` is nil when it shouldn't be")
+
+  if not p.alive then
+    return
+  end
 
   if p.fire_cooldown > 0 then
     p.fire_cooldown -= dt
@@ -97,12 +102,31 @@ function M.update(dt, p)
 end
 
 function M.draw(dt, p)
+  if not p.alive then
+    return
+  end
+
   gfx.rect_fill(p.x, p.y, SPR_SIZE, SPR_SIZE, gfx.COLOR_DARK_GREEN)
   gfx.rect_fill(p.x + 6, p.y + 6, SPR_SIZE - 12, SPR_SIZE - 12, gfx.COLOR_PINK)
+  local hit = M.hit_circ(p)
+  gfx.circ_fill(hit.x, hit.y, hit.r, gfx.COLOR_PINK)
 
   for i = 1, #p.bullets do
     Bullet.draw(p.bullets[i])
   end
+end
+
+function M.hit(p)
+  print("player hit!")
+  p.alive = false
+end
+
+function M.hit_circ(p)
+  return {
+    x = p.x + SPR_SIZE / 2,
+    y = p.y + SPR_SIZE / 2,
+    r = 2
+  }
 end
 
 return M
