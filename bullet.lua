@@ -5,6 +5,7 @@ function M.fire(x, y, dir)
     alive = true,
     x = x,
     y = y,
+    r = 4,
     speed = 600, -- px/s
     dir = dir,
   }
@@ -22,7 +23,7 @@ end
 
 function M.draw(b)
   if b.alive then
-    gfx.circ_fill(b.x, b.y, 4, gfx.COLOR_RED)
+    gfx.circ_fill(b.x, b.y, b.r, gfx.COLOR_RED)
   end
 end
 
