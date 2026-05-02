@@ -4,4 +4,9 @@
     "command": "just",
     "args": ["dev"],
   },
+  {
+    "label": "tools",
+    "command": "just",
+    "args": ["tools"],
+  },
 ]
