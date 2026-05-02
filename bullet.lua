@@ -5,21 +5,25 @@ M.kind = {
   ENEMY = 2,
 }
 
-function M.fire(x, y, dir, speed, kind)
+function M.fire(x, y, vel, kind)
+  local r = 4
+  if kind == M.kind.ENEMY then
+    r = 8
+  end
   return {
     alive = true,
     x = x,
     y = y,
-    r = 4,
-    speed = speed, -- px/s
-    dir = dir,
+    vel = vel,
+    r = r,
     kind = kind
   }
 end
 
 function M.update(dt, b)
   if b.alive then
-    b.x += b.speed * b.dir * dt
+    b.x += b.vel.x * dt
+    b.y += b.vel.y * dt
 
     if b.x > usagi.GAME_W or b.x + SPR_SIZE < 0 then
       b.alive = false

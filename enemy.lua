@@ -68,7 +68,7 @@ function M.update(dt, e)
     end
 
     if e.fire_countdown <= 0 then
-      table.insert(e.bullets, Bullet.fire(e.x, e.y, DIR.LEFT, BULLET_SPEED, Bullet.kind.ENEMY))
+      table.insert(e.bullets, Bullet.fire(e.x, e.y, { x = -BULLET_SPEED, y = 0 }, Bullet.kind.ENEMY))
       e.fire_countdown = e.fire_delay
     end
 

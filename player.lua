@@ -43,6 +43,10 @@ function M.init()
   }
 end
 
+local function fire(x, y)
+  return Bullet.fire(x, y, { x = BULLET_SPEED, y = 0 }, Bullet.kind.PLAYER)
+end
+
 function M.update(dt, p)
   assert(p, "player `p` is nil when it shouldn't be")
 
@@ -67,15 +71,15 @@ function M.update(dt, p)
     local x = p.x + 10
     local bullet_idx = find_available_bullet_idx(p.bullets)
     if bullet_idx then
-      p.bullets[bullet_idx] = Bullet.fire(x, p.y - 4, DIR.RIGHT, BULLET_SPEED)
+      p.bullets[bullet_idx] = fire(x, p.y - 4)
     end
     local bullet_idx_2 = find_available_bullet_idx(p.bullets)
     if bullet_idx_2 then
-      p.bullets[bullet_idx_2] = Bullet.fire(x, p.y + 8, DIR.RIGHT, BULLET_SPEED)
+      p.bullets[bullet_idx_2] = fire(x, p.y + 8)
     end
     local bullet_idx_3 = find_available_bullet_idx(p.bullets)
     if bullet_idx_3 then
-      p.bullets[bullet_idx_3] = Bullet.fire(x, p.y + 20, DIR.RIGHT, BULLET_SPEED, Bullet.kind.PLAYER)
+      p.bullets[bullet_idx_3] = fire(x, p.y + 20)
     end
   end
 

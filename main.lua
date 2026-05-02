@@ -26,9 +26,10 @@ end
 function _update(dt)
   Player.update(dt, state.player)
 
-  local bullets = state.player.bullets
-  for i = 1, #bullets do
-    local b = bullets[i]
+  -- figure out how to make this more efficient
+  local pbullets = state.player.bullets
+  for i = 1, #pbullets do
+    local b = pbullets[i]
     if b.alive then
       for j = 1, #state.enemies do
         local e = state.enemies[j]
