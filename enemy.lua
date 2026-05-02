@@ -4,7 +4,15 @@ local HIT_FLASH_TIME = 0.1 -- s
 local PARTICLE_COUNT = 24
 local PARTICLE_SIZE = 2
 
+-- a sequence is an array of phases
+local SEQUENCE = {
+  { fn = Pattern.fire_aimed,  params = {},                     count = 6, delay = 0.1, start_gap = 1 },
+  { fn = Pattern.fire_ring,   params = { n = 12 },             count = 2, delay = 0.8, start_gap = 2 },
+  { fn = Pattern.fire_spiral, params = { n = 12, spin = 0.3 }, count = 3, delay = 0.2, start_gap = 3 },
+}
+
 function M.init(x, y)
+  local first_phase = SEQUENCE[1]
   return {
     hp = 100,
     alive = true,
@@ -14,11 +22,11 @@ function M.init(x, y)
     hit_timer = 0,
     particles = {},
     bullets = {},
-    fire_delay = 1.5,     -- sec
-    fire_countdown = 1.5, -- sec
-    fire_func = Pattern.fire_aimed,
-    pattern_shots_remaining = 2,
+    fire_countdown = first_phase.start_gap, -- counts down until next shot; secs
     spiral_angle = 0,
+    sequence = SEQUENCE,
+    sequence_idx = 1,
+    pattern_shots_remaining = first_phase.count,
   }
 end
 
@@ -49,10 +57,32 @@ function M.dead(e)
   return e.hp > 0
 end
 
+local function advance_phase(e)
+  e.spiral_angle = 0
+  e.sequence_idx += 1
+
+  if e.sequence_idx > #e.sequence then
+    e.sequence_idx = 1
+  end
+
+  local phase = e.sequence[e.sequence_idx]
+  assert(phase, "expected non-nil phase when advancing sequence")
+
+  e.fire_countdown = phase.start_gap
+  e.pattern_shots_remaining = phase.count
+end
+
 local function fire_bullet(e, p)
-  e.fire_countdown = e.fire_delay
   assert(p, "expected non-nil player `p`")
-  e.fire_func(e, p)
+
+  local phase = e.sequence[e.sequence_idx]
+  phase.fn(e, p, phase.params)
+  e.pattern_shots_remaining -= 1
+  if e.pattern_shots_remaining > 0 then
+    e.fire_countdown = phase.delay
+  else
+    advance_phase(e)
+  end
 end
 
 function M.update(dt, e, p)
