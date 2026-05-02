@@ -34,7 +34,8 @@ local function init_bullets()
 end
 
 function M.init()
-  return {
+  local p = {
+    invincible = false,
     alive = true,
     x = 32,
     y = usagi.GAME_H / 2 - SPR_SIZE / 2,
@@ -43,6 +44,13 @@ function M.init()
     fire_cooldown = 0, -- s
     bullets = init_bullets()
   }
+
+  -- uncomment to make invincible in dev mode
+  -- if usagi.IS_DEV then
+  --   p.invincible = true
+  -- end
+
+  return p
 end
 
 local function fire(x, y, a)
@@ -113,14 +121,20 @@ function M.draw(dt, p)
   local hit = M.hit_circ(p)
   gfx.circ_fill(hit.x, hit.y, hit.r, gfx.COLOR_PINK)
 
+  if usagi.IS_DEV and p.invincible then
+    gfx.text("invincible", p.x - 18, p.y + SPR_SIZE, gfx.COLOR_RED)
+  end
+
   for i = 1, #p.bullets do
     Bullet.draw(p.bullets[i])
   end
 end
 
 function M.hit(p)
-  sfx.play("player_death")
-  p.alive = false
+  if not p.invincible then
+    sfx.play("player_death")
+    p.alive = false
+  end
 end
 
 function M.hit_circ(p)
