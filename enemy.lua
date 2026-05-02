@@ -3,6 +3,7 @@ local M = {}
 local HIT_FLASH_TIME = 0.1 -- s
 local PARTICLE_COUNT = 24
 local PARTICLE_SIZE = 2
+local BULLET_SPEED = 120 -- px/s
 
 function M.init(x, y)
   return {
@@ -13,6 +14,9 @@ function M.init(x, y)
     r = 10,
     hit_timer = 0,
     particles = {},
+    bullets = {},
+    fire_delay = 1,     -- sec
+    fire_countdown = 2, -- sec
   }
 end
 
@@ -57,6 +61,21 @@ function M.update(dt, e)
       table.remove(e.particles, i)
     end
   end
+
+  if e.alive then
+    if e.fire_countdown > 0 then
+      e.fire_countdown -= dt
+    end
+
+    if e.fire_countdown <= 0 then
+      table.insert(e.bullets, Bullet.fire(e.x, e.y, DIR.LEFT, BULLET_SPEED, Bullet.kind.ENEMY))
+      e.fire_countdown = e.fire_delay
+    end
+
+    for i = 1, #e.bullets do
+      Bullet.update(dt, e.bullets[i])
+    end
+  end
 end
 
 function M.draw(e)
@@ -77,6 +96,10 @@ function M.draw(e)
     gfx.circ_fill(e.x, e.y, 6, gfx.COLOR_RED)
     gfx.circ_fill(e.x, e.y, 4, gfx.COLOR_WHITE)
     gfx.circ_fill(e.x, e.y, 2, gfx.COLOR_RED)
+  end
+
+  for i = 1, #e.bullets do
+    Bullet.draw(e.bullets[i])
   end
 end
 

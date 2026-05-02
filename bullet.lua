@@ -1,13 +1,19 @@
 local M = {}
 
-function M.fire(x, y, dir)
+M.kind = {
+  PLAYER = 1,
+  ENEMY = 2,
+}
+
+function M.fire(x, y, dir, speed, kind)
   return {
     alive = true,
     x = x,
     y = y,
     r = 4,
-    speed = 600, -- px/s
+    speed = speed, -- px/s
     dir = dir,
+    kind = kind
   }
 end
 
@@ -23,7 +29,12 @@ end
 
 function M.draw(b)
   if b.alive then
-    gfx.circ_fill(b.x, b.y, b.r, gfx.COLOR_RED)
+    local color = gfx.COLOR_RED
+    if b.kind == M.kind.ENEMY then
+      color = gfx.COLOR_DARK_PURPLE
+    end
+    gfx.circ_fill(b.x, b.y, b.r, color)
+    gfx.circ_fill(b.x, b.y, b.r - 2, gfx.COLOR_WHITE)
   end
 end
 
