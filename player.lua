@@ -1,16 +1,60 @@
 local M = {
 }
 
+DIR = {
+  RIGHT = 1,
+  LEFT = 1
+}
+
+local MAX_PLAYER_BULLETS = 12
+
+local function fire_bullet(x, y, dir)
+  return {
+    alive = true,
+    x = x,
+    y = y,
+    speed = 600, -- px/s
+    dir = dir,
+  }
+end
+
+local function find_available_bullet_idx(bullets)
+  local idx = nil
+  for i = 1, #bullets do
+    if not bullets[i].alive then
+      idx = i
+      break
+    end
+  end
+  return idx
+end
+
+local function init_bullets()
+  local bullets = {}
+  for i = 1, MAX_PLAYER_BULLETS do
+    bullets[i] = Bullet.fire(0, 0, 0)
+    bullets[i].alive = false
+  end
+  return bullets
+end
+
 function M.init()
   return {
     x = 32,
     y = usagi.GAME_H / 2 - SPR_SIZE / 2,
-    speed = 160 -- px/s
+    speed = 120,       -- px/s
+    fire_delay = 0.1,  -- s
+    fire_cooldown = 0, -- s
+    bullets = init_bullets()
   }
 end
 
 function M.update(dt, p)
   assert(p, "player `p` is nil when it shouldn't be")
+
+  if p.fire_cooldown > 0 then
+    p.fire_cooldown -= dt
+  end
 
   local delta = { x = 0, y = 0 }
   if input.down(input.DOWN) then
@@ -24,15 +68,41 @@ function M.update(dt, p)
     delta.x = 1
   end
 
+  if p.fire_cooldown <= 0 and input.down(input.BTN1) then
+    p.fire_cooldown = p.fire_delay
+    local x = p.x + 10
+    local bullet_idx = find_available_bullet_idx(p.bullets)
+    if bullet_idx then
+      p.bullets[bullet_idx] = Bullet.fire(x, p.y - 4, DIR.RIGHT)
+    end
+    local bullet_idx_2 = find_available_bullet_idx(p.bullets)
+    if bullet_idx_2 then
+      p.bullets[bullet_idx_2] = Bullet.fire(x, p.y + 8, DIR.RIGHT)
+    end
+    local bullet_idx_3 = find_available_bullet_idx(p.bullets)
+    if bullet_idx_3 then
+      p.bullets[bullet_idx_3] = Bullet.fire(x, p.y + 20, DIR.RIGHT)
+    end
+  end
+
   delta = normalize_vec(delta)
   p.x += delta.x * p.speed * dt
   p.x = clamp(0, p.x, usagi.GAME_W - SPR_SIZE)
   p.y += delta.y * p.speed * dt
   p.y = clamp(0, p.y, usagi.GAME_H - SPR_SIZE)
+
+  for i = 1, #p.bullets do
+    local b = Bullet.update(dt, p.bullets[i])
+  end
 end
 
 function M.draw(dt, p)
   gfx.rect_fill(p.x, p.y, SPR_SIZE, SPR_SIZE, gfx.COLOR_DARK_GREEN)
+
+  -- draw bullets
+  for i = 1, #p.bullets do
+    Bullet.draw(p.bullets[i])
+  end
 end
 
 return M

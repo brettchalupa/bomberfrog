@@ -1,6 +1,7 @@
 SPR_SIZE = 16
 require("util")
 Player = require("player")
+Bullet = require("bullet")
 
 function _config()
   return { name = "BOMBERFROG", game_id = "com.brettmakesgames.bomberfrog" }
