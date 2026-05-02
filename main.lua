@@ -42,7 +42,7 @@ function _update(dt)
   end
 
   for i = 1, #state.enemies do
-    Enemy.update(dt, state.enemies[i])
+    Enemy.update(dt, state.enemies[i], state.player)
   end
 end
 

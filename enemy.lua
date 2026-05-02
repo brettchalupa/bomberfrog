@@ -7,7 +7,7 @@ local BULLET_SPEED = 120 -- px/s
 
 function M.init(x, y)
   return {
-    hp = 20,
+    hp = 40,
     alive = true,
     x = x,
     y = y,
@@ -47,7 +47,7 @@ function M.dead(e)
   return e.hp > 0
 end
 
-function M.update(dt, e)
+function M.update(dt, e, p)
   if e.hit_timer > 0 then
     e.hit_timer -= dt
   end
@@ -68,12 +68,26 @@ function M.update(dt, e)
     end
 
     if e.fire_countdown <= 0 then
-      table.insert(e.bullets, Bullet.fire(e.x, e.y, { x = -BULLET_SPEED, y = 0 }, Bullet.kind.ENEMY))
+      local vel = { x = -BULLET_SPEED, y = 0 }
+      if p then
+        -- aimed shot at player
+        local a = math.atan(p.y - e.y, p.x - e.x)
+        vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
+      end
+      table.insert(e.bullets, Bullet.fire(e.x, e.y, vel, Bullet.kind.ENEMY))
       e.fire_countdown = e.fire_delay
     end
 
     for i = 1, #e.bullets do
       Bullet.update(dt, e.bullets[i])
+    end
+
+    for i = #e.bullets, 1, -1 do
+      local b = e.bullets[i]
+      Bullet.update(dt, b)
+      if not b.alive then
+        table.remove(e.bullets, i)
+      end
     end
   end
 end

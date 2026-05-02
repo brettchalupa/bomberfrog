@@ -26,7 +26,7 @@ end
 local function init_bullets()
   local bullets = {}
   for i = 1, MAX_PLAYER_BULLETS do
-    bullets[i] = Bullet.fire(0, 0, 0, BULLET_SPEED, Bullet.kind.PLAYER)
+    bullets[i] = Bullet.fire(0, 0, { x = BULLET_SPEED, y = 0 }, Bullet.kind.PLAYER)
     bullets[i].alive = false
   end
   return bullets

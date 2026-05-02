@@ -25,7 +25,7 @@ function M.update(dt, b)
     b.x += b.vel.x * dt
     b.y += b.vel.y * dt
 
-    if b.x > usagi.GAME_W or b.x + SPR_SIZE < 0 then
+    if b.x > usagi.GAME_W or b.x + SPR_SIZE < 0 or b.y > usagi.GAME_H or b.y + SPR_SIZE < 0 then
       b.alive = false
     end
   end
