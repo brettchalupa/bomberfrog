@@ -4,6 +4,8 @@ Player = require("player")
 Enemy = require("enemy")
 Bullet = require("bullet")
 
+local HIT_SFX_MIN_GAP = 0.20 -- 200ms
+
 function _config()
   return { name = "BOMBERFROG", game_id = "com.brettmakesgames.bomberfrog" }
 end
@@ -20,14 +22,18 @@ function _init()
   state = {
     player = Player.init(),
     enemies = init_enemies(),
+    t = 0,
+    last_hit_sfx_t = 0,
   }
 end
 
 function _update(dt)
+  state.t += dt
   local player = state.player
 
   Player.update(dt, player)
 
+  local play_enemy_hit = false
   local pbullets = player.bullets
   for i = 1, #pbullets do
     local b = pbullets[i]
@@ -36,11 +42,17 @@ function _update(dt)
         local e = state.enemies[j]
 
         if b.alive and e.alive and circs_overlap(b, e) then
+          play_enemy_hit = true
           b.alive = false
           Enemy.hit(e)
         end
       end
     end
+  end
+  if play_enemy_hit and state.t - state.last_hit_sfx_t > HIT_SFX_MIN_GAP then
+    local sfx_idx = math.random(1, 4)
+    sfx.play("enemy_hit_" .. sfx_idx)
+    state.last_hit_sfx_t = state.t
   end
 
   for i = 1, #state.enemies do
@@ -64,6 +76,7 @@ function _update(dt)
 
   if not player.alive then
     if input.pressed(input.BTN2) then
+      sfx.play("confirm")
       _init()
     end
   end

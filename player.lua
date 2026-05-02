@@ -74,6 +74,8 @@ function M.update(dt, p)
   end
 
   if p.fire_cooldown <= 0 and input.down(input.BTN1) then
+    local sfx_idx = math.random(1, 4)
+    sfx.play("player_shoot_" .. sfx_idx)
     p.fire_cooldown = p.fire_delay
     local x = p.x + 10
     local bullet_idx = find_available_bullet_idx(p.bullets)
@@ -117,7 +119,7 @@ function M.draw(dt, p)
 end
 
 function M.hit(p)
-  print("player hit!")
+  sfx.play("player_death")
   p.alive = false
 end
 

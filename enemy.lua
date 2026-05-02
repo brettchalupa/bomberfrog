@@ -10,6 +10,7 @@ M.kind = {
   popcorn = {
     hp = 100,
     r = 7,
+    death_sfx = "popcorn_death",
     sequence = {
       { fn = Pattern.fire_aimed, params = {}, count = 6, delay = 0.1, start_gap = 1 },
     }
@@ -17,6 +18,7 @@ M.kind = {
   boss = {
     hp = 200,
     r = 12,
+    death_sfx = "boss_death",
     sequence = {
       { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 1.5 },
       { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 0.5 },
@@ -64,6 +66,7 @@ function M.hit(e)
   e.hit_timer = HIT_FLASH_TIME
   e.hp -= 1
   if e.hp < 0 then
+    sfx.play(e.death_sfx or "popcorn_death")
     e.alive = false
     emit_death_particles(e)
   end
