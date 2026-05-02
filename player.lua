@@ -8,6 +8,7 @@ DIR = {
 
 local BULLET_SPEED = 600 -- px/s
 local MAX_PLAYER_BULLETS = 12
+local SPREAD_DEG = 4
 
 -- returns nil if there are no available bullets, intentional to limit number of
 -- active player bullets and encourage getting closer
@@ -43,8 +44,9 @@ function M.init()
   }
 end
 
-local function fire(x, y)
-  return Bullet.fire(x, y, { x = BULLET_SPEED, y = 0 }, Bullet.kind.PLAYER)
+local function fire(x, y, a)
+  local vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
+  return Bullet.fire(x, y, vel, Bullet.kind.PLAYER)
 end
 
 function M.update(dt, p)
@@ -71,15 +73,15 @@ function M.update(dt, p)
     local x = p.x + 10
     local bullet_idx = find_available_bullet_idx(p.bullets)
     if bullet_idx then
-      p.bullets[bullet_idx] = fire(x, p.y - 4)
+      p.bullets[bullet_idx] = fire(x, p.y + 2, math.rad(-SPREAD_DEG))
     end
     local bullet_idx_2 = find_available_bullet_idx(p.bullets)
     if bullet_idx_2 then
-      p.bullets[bullet_idx_2] = fire(x, p.y + 8)
+      p.bullets[bullet_idx_2] = fire(x, p.y + 8, math.rad(0))
     end
     local bullet_idx_3 = find_available_bullet_idx(p.bullets)
     if bullet_idx_3 then
-      p.bullets[bullet_idx_3] = fire(x, p.y + 20)
+      p.bullets[bullet_idx_3] = fire(x, p.y + 12, math.rad(SPREAD_DEG))
     end
   end
 

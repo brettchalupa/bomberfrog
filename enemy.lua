@@ -7,7 +7,7 @@ local BULLET_SPEED = 120 -- px/s
 
 function M.init(x, y)
   return {
-    hp = 40,
+    hp = 100,
     alive = true,
     x = x,
     y = y,
