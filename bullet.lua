@@ -14,6 +14,7 @@ function M.fire(x, y, vel, kind)
     alive = true,
     x = x,
     y = y,
+    t = 0,
     vel = vel,
     r = r,
     kind = kind
@@ -22,6 +23,7 @@ end
 
 function M.update(dt, b)
   if b.alive then
+    b.t += dt
     b.x += b.vel.x * dt
     b.y += b.vel.y * dt
 
