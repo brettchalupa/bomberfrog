@@ -5,16 +5,16 @@ local M = {}
 local HIT_FLASH_TIME = 0.1 -- s
 local PARTICLE_COUNT = 24
 local PARTICLE_SIZE = 2
-local FLY_IN_SPEED = 80 -- px/s
-local ARRIVE_DIST = 1 -- px
+local FLY_IN_SPEED = 160 -- px/s
+local ARRIVE_DIST = 1    -- px
 
 M.kind = {
   popcorn = {
-    hp = 100,
+    hp = 20,
     r = 7,
     death_sfx = "popcorn_death",
     sequence = {
-      { fn = Pattern.fire_aimed, params = {}, count = 6, delay = 0.1, start_gap = 1 },
+      { fn = Pattern.fire_aimed, params = {}, count = 6, delay = 0.07, start_gap = 0.8 },
     }
   },
   boss = {
@@ -24,8 +24,8 @@ M.kind = {
     sequence = {
       { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 1.5 },
       { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 0.5 },
-      { fn = Pattern.fire_ring,   params = { n = 12 },             count = 5,  delay = 0.08, start_gap = 3 },
-      { fn = Pattern.fire_spiral, params = { n = 6, spin = 0.15 }, count = 10, delay = 0.04, start_gap = 6 },
+      { fn = Pattern.fire_ring,   params = { n = 12 },             count = 5,  delay = 0.08, start_gap = 2 },
+      { fn = Pattern.fire_spiral, params = { n = 6, spin = 0.15 }, count = 10, delay = 0.04, start_gap = 3 },
     }
   }
 }

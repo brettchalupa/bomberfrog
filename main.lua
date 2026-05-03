@@ -17,6 +17,36 @@ local LEVELS = {
       [1] = {
         {
           kind = Enemy.kind.popcorn,
+          dest = DEST[3]
+        },
+      },
+      [2] = {
+        {
+          kind = Enemy.kind.popcorn,
+          dest = DEST[1]
+        },
+        {
+          kind = Enemy.kind.popcorn,
+          dest = DEST[2]
+        },
+      },
+      [3] = {
+        {
+          kind = Enemy.kind.popcorn,
+          dest = DEST[1]
+        },
+        {
+          kind = Enemy.kind.popcorn,
+          dest = DEST[2]
+        },
+        {
+          kind = Enemy.kind.popcorn,
+          dest = DEST[3]
+        },
+      },
+      [4] = {
+        {
+          kind = Enemy.kind.popcorn,
           dest = DEST[1]
         },
         {
@@ -27,6 +57,16 @@ local LEVELS = {
           kind = Enemy.kind.boss,
           dest = DEST[3]
         }
+      },
+      [5] = {
+        {
+          kind = Enemy.kind.boss,
+          dest = DEST[1]
+        },
+        {
+          kind = Enemy.kind.boss,
+          dest = DEST[2]
+        },
       }
     }
   }
@@ -36,7 +76,9 @@ function _config()
   return { name = "BOMBERFROG", game_id = "com.brettmakesgames.bomberfrog" }
 end
 
-local function init_enemies(level_idx, wave_idx)
+local function init_enemies_for_wave()
+  local level_idx = State.level
+  local wave_idx = State.wave
   local level = LEVELS[level_idx]
   assert(level, "expected non-nil level for idx: " .. level_idx)
   local wave = level.waves[wave_idx]
@@ -49,7 +91,7 @@ local function init_enemies(level_idx, wave_idx)
     table.insert(enemies, Enemy.init(e.kind, usagi.GAME_W + 16, e.dest.y, e.dest))
   end
 
-  return enemies
+  State.enemies = enemies
 end
 
 function _init()
@@ -62,7 +104,29 @@ function _init()
     enemies = {},
   }
 
-  State.enemies = init_enemies(State.level, State.wave)
+  init_enemies_for_wave()
+end
+
+local function all_enemies_dead(enemies)
+  for i = 1, #enemies do
+    if enemies[i].alive then
+      return false
+    end
+  end
+
+  return true
+end
+
+local function try_advance_wave()
+  if all_enemies_dead(State.enemies) then
+    State.wave += 1
+    -- NOTE: temp wrapping until we have concept of levels
+    if State.wave > #LEVELS[State.level].waves then
+      State.wave = 1
+    end
+
+    init_enemies_for_wave()
+  end
 end
 
 function _update(dt)
@@ -118,6 +182,8 @@ function _update(dt)
       _init()
     end
   end
+
+  try_advance_wave()
 end
 
 function _draw(dt)
