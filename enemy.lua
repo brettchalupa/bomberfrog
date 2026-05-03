@@ -5,6 +5,8 @@ local M = {}
 local HIT_FLASH_TIME = 0.1 -- s
 local PARTICLE_COUNT = 24
 local PARTICLE_SIZE = 2
+local FLY_IN_SPEED = 80 -- px/s
+local ARRIVE_DIST = 1 -- px
 
 M.kind = {
   popcorn = {
@@ -28,7 +30,7 @@ M.kind = {
   }
 }
 
-function M.init(kind, x, y)
+function M.init(kind, x, y, dest)
   local sequence = kind.sequence
   local first_phase = sequence[1]
   return {
@@ -45,6 +47,8 @@ function M.init(kind, x, y)
     sequence = sequence,
     sequence_idx = 1,
     pattern_shots_remaining = first_phase.count,
+    dest = dest,
+    arrived = false,
   }
 end
 
@@ -123,12 +127,27 @@ function M.update(dt, e, p)
   end
 
   if e.alive then
-    if e.fire_countdown > 0 then
-      e.fire_countdown -= dt
-    end
+    if not e.arrived then
+      local dx = e.dest.x - e.x
+      local dy = e.dest.y - e.y
+      local dist = math.sqrt(dx * dx + dy * dy)
+      local step = FLY_IN_SPEED * dt
+      if dist <= step + ARRIVE_DIST then
+        e.x = e.dest.x
+        e.y = e.dest.y
+        e.arrived = true
+      else
+        e.x = e.x + (dx / dist) * step
+        e.y = e.y + (dy / dist) * step
+      end
+    else
+      if e.fire_countdown > 0 then
+        e.fire_countdown -= dt
+      end
 
-    if e.fire_countdown <= 0 then
-      fire_bullet(e, p)
+      if e.fire_countdown <= 0 then
+        fire_bullet(e, p)
+      end
     end
 
     for i = #e.bullets, 1, -1 do

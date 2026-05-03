@@ -46,7 +46,7 @@ local function init_enemies(level_idx, wave_idx)
   for i = 1, #wave do
     local e = wave[i]
     print("inserted enemy")
-    table.insert(enemies, Enemy.init(e.kind, e.dest.x, e.dest.y))
+    table.insert(enemies, Enemy.init(e.kind, usagi.GAME_W + 16, e.dest.y, e.dest))
   end
 
   return enemies
