@@ -14,7 +14,7 @@ local DEST = {
 local LEVELS = {
   [1] = {
     waves = {
-      {
+      [1] = {
         {
           kind = Enemy.kind.popcorn,
           dest = DEST[1]
