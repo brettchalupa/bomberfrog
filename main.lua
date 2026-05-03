@@ -1,5 +1,5 @@
 SPR_SIZE = 16
-require("util")
+Util = require("util")
 Player = require("player")
 Enemy = require("enemy")
 Bullet = require("bullet")
@@ -53,7 +53,7 @@ local function init_enemies(level_idx, wave_idx)
 end
 
 function _init()
-  state = {
+  State = {
     level = 1,
     wave = 1,
     player = Player.init(),
@@ -62,12 +62,12 @@ function _init()
     enemies = {},
   }
 
-  state.enemies = init_enemies(state.level, state.wave)
+  State.enemies = init_enemies(State.level, State.wave)
 end
 
 function _update(dt)
-  state.t += dt
-  local player = state.player
+  State.t += dt
+  local player = State.player
 
   Player.update(dt, player)
 
@@ -76,10 +76,10 @@ function _update(dt)
   for i = 1, #pbullets do
     local b = pbullets[i]
     if b.alive then
-      for j = 1, #state.enemies do
-        local e = state.enemies[j]
+      for j = 1, #State.enemies do
+        local e = State.enemies[j]
 
-        if b.alive and e.alive and circs_overlap(b, e) then
+        if b.alive and e.alive and Util.circs_overlap(b, e) then
           play_enemy_hit = true
           b.alive = false
           Enemy.hit(e)
@@ -87,15 +87,15 @@ function _update(dt)
       end
     end
   end
-  if play_enemy_hit and state.t - state.last_hit_sfx_t > HIT_SFX_MIN_GAP then
+  if play_enemy_hit and State.t - State.last_hit_sfx_t > HIT_SFX_MIN_GAP then
     local sfx_idx = math.random(1, 4)
     sfx.play("enemy_hit_" .. sfx_idx)
-    state.last_hit_sfx_t = state.t
+    State.last_hit_sfx_t = State.t
   end
 
-  for i = 1, #state.enemies do
-    local e = state.enemies[i]
-    Enemy.update(dt, e, state.player)
+  for i = 1, #State.enemies do
+    local e = State.enemies[i]
+    Enemy.update(dt, e, State.player)
 
     if e.alive then
       for j = 1, #e.bullets do
@@ -103,7 +103,7 @@ function _update(dt)
 
         if b.alive and player.alive then
           local b_hit_circ = { x = b.x, y = b.y, r = b.r / 2 }
-          if circs_overlap(b_hit_circ, Player.hit_circ(player)) then
+          if Util.circs_overlap(b_hit_circ, Player.hit_circ(player)) then
             b.alive = false
             Player.hit(player)
           end
@@ -123,13 +123,13 @@ end
 function _draw(dt)
   gfx.clear(gfx.COLOR_BLUE)
 
-  Player.draw(dt, state.player)
+  Player.draw(dt, State.player)
 
-  for i = 1, #state.enemies do
-    Enemy.draw(state.enemies[i])
+  for i = 1, #State.enemies do
+    Enemy.draw(State.enemies[i])
   end
 
-  if not state.player.alive then
+  if not State.player.alive then
     local txt = "DEAD!"
     local txt_w, txt_h = usagi.measure_text(txt)
     gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2, usagi.GAME_H / 2 - txt_h / 2, gfx.COLOR_DARK_PURPLE)
@@ -142,6 +142,6 @@ function _draw(dt)
   end
 
   if usagi.IS_DEV then
-    gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 10, 10, gfx.COLOR_BLACK)
+    gfx.text("lvl:" .. State.level .. ",wve:" .. State.wave, 10, 10, gfx.COLOR_BLACK)
   end
 end

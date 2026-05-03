@@ -100,11 +100,11 @@ function M.update(dt, p)
     end
   end
 
-  delta = normalize_vec(delta)
+  delta = Util.normalize_vec(delta)
   p.x += delta.x * p.speed * dt
-  p.x = clamp(0, p.x, usagi.GAME_W - SPR_SIZE)
+  p.x = Util.clamp(0, p.x, usagi.GAME_W - SPR_SIZE)
   p.y += delta.y * p.speed * dt
-  p.y = clamp(0, p.y, usagi.GAME_H - SPR_SIZE)
+  p.y = Util.clamp(0, p.y, usagi.GAME_H - SPR_SIZE)
 
   for i = 1, #p.bullets do
     local b = Bullet.update(dt, p.bullets[i])
