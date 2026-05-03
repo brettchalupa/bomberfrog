@@ -46,9 +46,9 @@ function M.init()
   }
 
   -- uncomment to make invincible in dev mode
-  -- if usagi.IS_DEV then
-  --   p.invincible = true
-  -- end
+  if usagi.IS_DEV then
+    p.invincible = true
+  end
 
   return p
 end

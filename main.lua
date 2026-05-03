@@ -6,25 +6,63 @@ Bullet = require("bullet")
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
 
+local DEST = {
+  { x = usagi.GAME_W - 80, y = 60 },
+  { x = usagi.GAME_W - 80, y = 120 },
+  { x = usagi.GAME_W - 44, y = 90 },
+}
+local LEVELS = {
+  [1] = {
+    waves = {
+      {
+        {
+          kind = Enemy.kind.popcorn,
+          dest = DEST[1]
+        },
+        {
+          kind = Enemy.kind.popcorn,
+          dest = DEST[2]
+        },
+        {
+          kind = Enemy.kind.boss,
+          dest = DEST[3]
+        }
+      }
+    }
+  }
+}
+
 function _config()
   return { name = "BOMBERFROG", game_id = "com.brettmakesgames.bomberfrog" }
 end
 
-local function init_enemies()
-  return {
-    Enemy.init(Enemy.kind.popcorn, usagi.GAME_W - 80, 60),
-    Enemy.init(Enemy.kind.popcorn, usagi.GAME_W - 80, 120),
-    Enemy.init(Enemy.kind.boss, usagi.GAME_W - 44, 90)
-  }
+local function init_enemies(level_idx, wave_idx)
+  local level = LEVELS[level_idx]
+  assert(level, "expected non-nil level for idx: " .. level_idx)
+  local wave = level.waves[wave_idx]
+  assert(wave, "expected non-nil wave for idx: " .. wave_idx)
+  local enemies = {}
+
+  for i = 1, #wave do
+    local e = wave[i]
+    print("inserted enemy")
+    table.insert(enemies, Enemy.init(e.kind, e.dest.x, e.dest.y))
+  end
+
+  return enemies
 end
 
 function _init()
   state = {
+    level = 1,
+    wave = 1,
     player = Player.init(),
-    enemies = init_enemies(),
     t = 0,
     last_hit_sfx_t = 0,
+    enemies = {},
   }
+
+  state.enemies = init_enemies(state.level, state.wave)
 end
 
 function _update(dt)
@@ -84,7 +122,6 @@ end
 
 function _draw(dt)
   gfx.clear(gfx.COLOR_BLUE)
-  gfx.text("Bomberfrog!", 10, 10, gfx.COLOR_WHITE)
 
   Player.draw(dt, state.player)
 
@@ -102,5 +139,9 @@ function _draw(dt)
     local txt2_w, txt2_h = usagi.measure_text(txt2)
     gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2, usagi.GAME_H / 2 - txt2_h / 2 + 14, gfx.COLOR_DARK_PURPLE)
     gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
+  end
+
+  if usagi.IS_DEV then
+    gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 10, 10, gfx.COLOR_BLACK)
   end
 end
