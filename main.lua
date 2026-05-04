@@ -6,6 +6,7 @@ Bullet = require("bullet")
 Chip = require("chip")
 Bomb = require("bomb")
 Explosion = require("explosion")
+Pixels = require("pixels")
 Fx = require("fx")
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
@@ -108,6 +109,7 @@ function _init()
     chips = {},
     bombs = {},
     explosions = {},
+    pixels = {},
     fx = Fx.init(),
   }
 
@@ -189,6 +191,15 @@ function _update(dt)
     end
   end
 
+  for i = #State.pixels, 1, -1 do
+    local p = State.pixels[i]
+    Pixels.update(dt, p)
+
+    if not p.alive then
+      table.remove(State.pixels, i)
+    end
+  end
+
   local play_enemy_hit = false
   local pbullets = player.bullets
   for i = 1, #pbullets do
@@ -248,10 +259,10 @@ function _draw(dt)
     Chip.draw(State.chips[i])
   end
 
-  if usagi.IS_DEV and State.player.alive then
-    local r = input.down(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
-    gfx.circ(State.player.x + SPR_SIZE / 2, State.player.y + SPR_SIZE / 2, r, gfx.COLOR_WHITE)
-  end
+  -- if usagi.IS_DEV and State.player.alive then
+  --   local r = input.down(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
+  --   gfx.circ(State.player.x + SPR_SIZE / 2, State.player.y + SPR_SIZE / 2, r, gfx.COLOR_WHITE)
+  -- end
 
   Player.draw(dt, State.player)
 
@@ -265,6 +276,10 @@ function _draw(dt)
 
   for _, ex in ipairs(State.explosions) do
     Explosion.draw(ex)
+  end
+
+  for _, p in ipairs(State.pixels) do
+    Pixels.draw(p)
   end
 
   if not State.player.alive then
@@ -289,6 +304,6 @@ function _draw(dt)
 
   -- dev-only helpers
   if usagi.IS_DEV then
-    gfx.text("lvl:" .. State.level .. ",wve:" .. State.wave, 10, 10, gfx.COLOR_BLACK)
+    gfx.text("lvl:" .. State.level .. ",wve:" .. State.wave, 10, 10, gfx.COLOR_INDIGO)
   end
 end

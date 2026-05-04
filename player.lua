@@ -47,10 +47,10 @@ function M.init()
   }
 
   -- uncomment to make invincible in dev mode
-  if usagi.IS_DEV then
-    p.invincible = true
-    p.chip_count = Bomb.CHIP_COST
-  end
+  -- if usagi.IS_DEV then
+  --   p.invincible = true
+  --   p.chip_count = Bomb.CHIP_COST
+  -- end
 
   return p
 end
@@ -67,7 +67,7 @@ local function try_bomb(p)
     sfx.play("bomb")
     table.insert(State.bombs, Bomb.init(p.x + SPR_SIZE / 2, p.y + SPR_SIZE / 2))
     p.chip_count = 0
-    Fx.hitstop(0.06)
+    Fx.hitstop(0.1)
 
     return true
   else
@@ -155,6 +155,11 @@ function M.hit(p)
     sfx.play("player_death")
     if not try_bomb(p) then
       p.alive = false
+      local cx = p.x + SPR_SIZE / 2
+      local cy = p.y + SPR_SIZE / 2
+      Explosion.spawn(cx, cy, 28)
+      Pixels.spawn(cx, cy, 18, gfx.COLOR_DARK_GREEN)
+      Pixels.spawn(cx, cy, 10, gfx.COLOR_PINK)
     end
   end
 end

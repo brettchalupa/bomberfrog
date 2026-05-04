@@ -3,8 +3,7 @@ local Pattern = require("pattern") -- NOTE: required before enemy since enemy re
 local M = {}
 
 local HIT_FLASH_TIME = 0.1 -- s
-local PARTICLE_COUNT = 24
-local PARTICLE_SIZE = 2
+local DEATH_PIXEL_COUNT = 24
 local FLY_IN_SPEED = 160 -- px/s
 local ARRIVE_DIST = 1    -- px
 
@@ -42,7 +41,6 @@ function M.init(kind, x, y, dest)
     y = y,
     r = kind.r,
     hit_timer = 0,
-    particles = {},
     bullets = {},
     chips = kind.chips,
     fire_countdown = first_phase.start_gap, -- counts down until next shot; secs
@@ -55,20 +53,6 @@ function M.init(kind, x, y, dest)
   }
 end
 
-local function emit_death_particles(e)
-  for _ = 1, PARTICLE_COUNT do
-    local angle = math.random() * math.pi * 2
-    local speed = 60 + math.random() * 100
-    e.particles[#e.particles + 1] = {
-      x = e.x,
-      y = e.y,
-      vx = math.cos(angle) * speed,
-      vy = math.sin(angle) * speed,
-      life = 0.5 + math.random() * 0.5,
-    }
-  end
-end
-
 function M.hit(e, dmg)
   dmg = dmg or 1
   e.hit_timer = HIT_FLASH_TIME
@@ -76,7 +60,7 @@ function M.hit(e, dmg)
   if e.hp <= 0 then
     sfx.play(e.death_sfx or "popcorn_death")
     e.alive = false
-    emit_death_particles(e)
+    Pixels.spawn(e.x, e.y, DEATH_PIXEL_COUNT, gfx.COLOR_RED)
     assert(e.chips, "nil chips for e")
     Chip.drop(e.chips, e.x, e.y)
   end
@@ -118,16 +102,6 @@ function M.update(dt, e, p)
     e.hit_timer -= dt
   end
 
-  for i = #e.particles, 1, -1 do
-    local p = e.particles[i]
-    p.x = p.x + p.vx * dt
-    p.y = p.y + p.vy * dt
-    p.life = p.life - dt
-    if p.life <= 0 then
-      table.remove(e.particles, i)
-    end
-  end
-
   if e.alive then
     if not e.arrived then
       local dx = e.dest.x - e.x
@@ -163,11 +137,6 @@ function M.update(dt, e, p)
 end
 
 function M.draw(e)
-  for i = 1, #e.particles do
-    local p = e.particles[i]
-    gfx.rect_fill(p.x, p.y, PARTICLE_SIZE, PARTICLE_SIZE, gfx.COLOR_RED)
-  end
-
   if not e.alive then
     return
   end
