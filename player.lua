@@ -87,14 +87,14 @@ function M.update(dt, p)
   end
 
   local delta = { x = 0, y = 0 }
-  if input.down(input.DOWN) then
+  if input.held(input.DOWN) then
     delta.y = 1
-  elseif input.down(input.UP) then
+  elseif input.held(input.UP) then
     delta.y = -1
   end
-  if input.down(input.LEFT) then
+  if input.held(input.LEFT) then
     delta.x = -1
-  elseif input.down(input.RIGHT) then
+  elseif input.held(input.RIGHT) then
     delta.x = 1
   end
 
@@ -102,7 +102,7 @@ function M.update(dt, p)
     try_bomb(p)
   end
 
-  if p.fire_cooldown <= 0 and input.down(input.BTN1) then
+  if p.fire_cooldown <= 0 and input.held(input.BTN1) then
     Util.play_random_sfx("player_shoot", 4)
     p.fire_cooldown = p.fire_delay
     local x = p.x + 10

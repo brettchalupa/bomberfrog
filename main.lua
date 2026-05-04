@@ -141,7 +141,7 @@ local function try_advance_wave()
 end
 
 local function update_chips(dt, player)
-  local player_firing = input.down(input.BTN1)
+  local player_firing = input.held(input.BTN1)
   for i = #State.chips, 1, -1 do
     local c = State.chips[i]
     Chip.update(dt, c, player, player_firing)
@@ -260,7 +260,7 @@ function _draw(dt)
   end
 
   -- if usagi.IS_DEV and State.player.alive then
-  --   local r = input.down(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
+  --   local r = input.held(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
   --   gfx.circ(State.player.x + SPR_SIZE / 2, State.player.y + SPR_SIZE / 2, r, gfx.COLOR_WHITE)
   -- end
 
