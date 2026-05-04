@@ -132,6 +132,27 @@ local function try_advance_wave()
   end
 end
 
+local function update_chips(dt, player)
+  local player_firing = input.down(input.BTN1)
+  for i = #State.chips, 1, -1 do
+    local c = State.chips[i]
+    Chip.update(dt, c, player, player_firing)
+    if c.alive and player.alive and Util.circs_overlap(c, Player.collect_circ(player)) then
+      Util.play_random_sfx("collect_chip", 3)
+      local prev_count = player.chip_count
+      player.chip_count += 1
+      player.chip_count = Util.min(player.chip_count, CHIPS_FOR_BOMB)
+      if prev_count ~= CHIPS_FOR_BOMB and player.chip_count == CHIPS_FOR_BOMB then
+        sfx.play("bomb_ready")
+      end
+      c.alive = false
+    end
+    if not c.alive then
+      table.remove(State.chips, i)
+    end
+  end
+end
+
 function _update(dt)
   State.t += dt
   local player = State.player
@@ -178,24 +199,7 @@ function _update(dt)
     end
   end
 
-  local player_firing = input.down(input.BTN1)
-  for i = #State.chips, 1, -1 do
-    local c = State.chips[i]
-    Chip.update(dt, c, player, player_firing)
-    if c.alive and player.alive and Util.circs_overlap(c, Player.collect_circ(player)) then
-      Util.play_random_sfx("collect_chip", 3)
-      local prev_count = player.chip_count
-      player.chip_count += 1
-      player.chip_count = Util.min(player.chip_count, CHIPS_FOR_BOMB)
-      if prev_count ~= CHIPS_FOR_BOMB and player.chip_count == CHIPS_FOR_BOMB then
-        sfx.play("bomb_ready")
-      end
-      c.alive = false
-    end
-    if not c.alive then
-      table.remove(State.chips, i)
-    end
-  end
+  update_chips(dt, player)
 
   if not player.alive then
     if input.pressed(input.BTN2) then
