@@ -110,6 +110,8 @@ function _init()
   }
 
   init_enemies_for_wave()
+
+  input.set_mouse_visible(false)
 end
 
 local function all_enemies_dead(enemies)
