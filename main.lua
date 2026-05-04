@@ -6,6 +6,7 @@ Bullet = require("bullet")
 Chip = require("chip")
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
+local CHIPS_FOR_BOMB = 12
 
 local DEST = {
   { x = usagi.GAME_W - 80, y = 60 },
@@ -183,7 +184,12 @@ function _update(dt)
     Chip.update(dt, c, player, player_firing)
     if c.alive and player.alive and Util.circs_overlap(c, Player.collect_circ(player)) then
       Util.play_random_sfx("collect_chip", 3)
+      local prev_count = player.chip_count
       player.chip_count += 1
+      player.chip_count = Util.min(player.chip_count, CHIPS_FOR_BOMB)
+      if prev_count ~= CHIPS_FOR_BOMB and player.chip_count == CHIPS_FOR_BOMB then
+        sfx.play("bomb_ready")
+      end
       c.alive = false
     end
     if not c.alive then
@@ -231,6 +237,15 @@ function _draw(dt)
     gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
   end
 
+  -- HUD - bomb bar
+  local bg_color = gfx.COLOR_WHITE
+  if State.player.chip_count == CHIPS_FOR_BOMB then
+    bg_color = gfx.COLOR_RED
+  end
+  gfx.rect_fill(7, usagi.GAME_H - 12 - 1, 4 * CHIPS_FOR_BOMB + 2, 8, bg_color)
+  gfx.rect_fill(8, usagi.GAME_H - 12, 4 * State.player.chip_count, 6, Chip.color)
+
+  -- dev-only helpers
   if usagi.IS_DEV then
     gfx.text("lvl:" .. State.level .. ",wve:" .. State.wave, 10, 10, gfx.COLOR_BLACK)
   end

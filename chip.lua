@@ -47,11 +47,13 @@ function M.update(dt, c, player, player_firing)
   c.y += c.vel.y * dt
 end
 
+M.color = gfx.COLOR_PEACH
+
 function M.draw(c)
   if not c.alive then
     return
   end
-  gfx.rect_fill(c.x - SIZE / 2, c.y - SIZE / 2, SIZE, SIZE, gfx.COLOR_YELLOW)
+  gfx.rect_fill(c.x - SIZE / 2, c.y - SIZE / 2, SIZE, SIZE, M.color)
 end
 
 return M

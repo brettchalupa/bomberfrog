@@ -34,4 +34,12 @@ function M.circs_overlap(c1, c2)
   return distance_sq < radius_sum_sq
 end
 
+function M.min(a, b)
+  if a > b then
+    return b
+  end
+
+  return a
+end
+
 return M
