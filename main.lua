@@ -4,9 +4,10 @@ Player = require("player")
 Enemy = require("enemy")
 Bullet = require("bullet")
 Chip = require("chip")
+Bomb = require("bomb")
+Fx = require("fx")
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
-local CHIPS_FOR_BOMB = 12
 
 local DEST = {
   { x = usagi.GAME_W - 80, y = 60 },
@@ -89,7 +90,6 @@ local function init_enemies_for_wave()
 
   for i = 1, #wave do
     local e = wave[i]
-    print("inserted enemy")
     table.insert(enemies, Enemy.init(e.kind, usagi.GAME_W + 16, e.dest.y, e.dest))
   end
 
@@ -104,7 +104,9 @@ function _init()
     t = 0,
     last_hit_sfx_t = 0,
     enemies = {},
-    chips = {}
+    chips = {},
+    bombs = {},
+    fx = Fx.init(),
   }
 
   init_enemies_for_wave()
@@ -141,8 +143,8 @@ local function update_chips(dt, player)
       Util.play_random_sfx("collect_chip", 3)
       local prev_count = player.chip_count
       player.chip_count += 1
-      player.chip_count = Util.min(player.chip_count, CHIPS_FOR_BOMB)
-      if prev_count ~= CHIPS_FOR_BOMB and player.chip_count == CHIPS_FOR_BOMB then
+      player.chip_count = Util.min(player.chip_count, Bomb.CHIP_COST)
+      if prev_count ~= Bomb.CHIP_COST and Player.bombable(player) then
         sfx.play("bomb_ready")
       end
       c.alive = false
@@ -154,10 +156,25 @@ local function update_chips(dt, player)
 end
 
 function _update(dt)
+  Fx.update(dt)
+  if Fx.is_hitstopped() then
+    return
+  end
+
   State.t += dt
+
   local player = State.player
 
   Player.update(dt, player)
+
+  for i = #State.bombs, 1, -1 do
+    local b = State.bombs[i]
+    Bomb.update(dt, b)
+
+    if not b.alive then
+      table.remove(State.bombs, i)
+    end
+  end
 
   local play_enemy_hit = false
   local pbullets = player.bullets
@@ -214,6 +231,10 @@ end
 function _draw(dt)
   gfx.clear(gfx.COLOR_BLUE)
 
+  for _, b in ipairs(State.bombs) do
+    Bomb.draw(b)
+  end
+
   for i = 1, #State.chips do
     Chip.draw(State.chips[i])
   end
@@ -243,10 +264,10 @@ function _draw(dt)
 
   -- HUD - bomb bar
   local bg_color = gfx.COLOR_WHITE
-  if State.player.chip_count == CHIPS_FOR_BOMB then
+  if Player.bombable(State.player) then
     bg_color = gfx.COLOR_RED
   end
-  gfx.rect_fill(7, usagi.GAME_H - 12 - 1, 4 * CHIPS_FOR_BOMB + 2, 8, bg_color)
+  gfx.rect_fill(7, usagi.GAME_H - 12 - 1, 4 * Bomb.CHIP_COST + 2, 8, bg_color)
   gfx.rect_fill(8, usagi.GAME_H - 12, 4 * State.player.chip_count, 6, Chip.color)
 
   -- dev-only helpers

@@ -12,7 +12,7 @@ M.kind = {
   popcorn = {
     hp = 20,
     r = 7,
-    chips = 3,
+    chips = 6,
     death_sfx = "popcorn_death",
     sequence = {
       { fn = Pattern.fire_aimed, params = {}, count = 6, delay = 0.07, start_gap = 0.8 },
@@ -21,7 +21,7 @@ M.kind = {
   boss = {
     hp = 200,
     r = 12,
-    chips = 8,
+    chips = 12,
     death_sfx = "boss_death",
     sequence = {
       { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 1.5 },
@@ -69,20 +69,17 @@ local function emit_death_particles(e)
   end
 end
 
-function M.hit(e)
+function M.hit(e, dmg)
+  dmg = dmg or 1
   e.hit_timer = HIT_FLASH_TIME
-  e.hp -= 1
-  if e.hp < 0 then
+  e.hp -= dmg
+  if e.hp <= 0 then
     sfx.play(e.death_sfx or "popcorn_death")
     e.alive = false
     emit_death_particles(e)
     assert(e.chips, "nil chips for e")
     Chip.drop(e.chips, e.x, e.y)
   end
-end
-
-function M.dead(e)
-  return e.hp > 0
 end
 
 local function advance_phase(e)

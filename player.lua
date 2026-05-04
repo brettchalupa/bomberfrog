@@ -49,6 +49,7 @@ function M.init()
   -- uncomment to make invincible in dev mode
   if usagi.IS_DEV then
     p.invincible = true
+    p.chip_count = Bomb.CHIP_COST
   end
 
   return p
@@ -57,6 +58,21 @@ end
 local function fire(x, y, a)
   local vel = { x = math.cos(a) * BULLET_SPEED, y = math.sin(a) * BULLET_SPEED }
   return Bullet.fire(x, y, vel, Bullet.kind.PLAYER)
+end
+
+-- attempts to trigger the player's bomb if the player has enough chips; return
+-- a boolean for whether or not the bomb was triggered
+local function try_bomb(p)
+  if M.bombable(p) then
+    sfx.play("bomb")
+    table.insert(State.bombs, Bomb.init(p.x + SPR_SIZE / 2, p.y + SPR_SIZE / 2))
+    p.chip_count = 0
+    Fx.hitstop(0.06)
+
+    return true
+  else
+    return false
+  end
 end
 
 function M.update(dt, p)
@@ -80,6 +96,10 @@ function M.update(dt, p)
     delta.x = -1
   elseif input.down(input.RIGHT) then
     delta.x = 1
+  end
+
+  if input.pressed(input.BTN2) then
+    try_bomb(p)
   end
 
   if p.fire_cooldown <= 0 and input.down(input.BTN1) then
@@ -133,7 +153,9 @@ end
 function M.hit(p)
   if not p.invincible then
     sfx.play("player_death")
-    p.alive = false
+    if not try_bomb(p) then
+      p.alive = false
+    end
   end
 end
 
@@ -151,6 +173,11 @@ function M.collect_circ(p)
     y = p.y + SPR_SIZE / 2,
     r = 8
   }
+end
+
+-- returns whether or not the player has enough chips to trigger bomb
+function M.bombable(p)
+  return p.chip_count >= Bomb.CHIP_COST
 end
 
 return M
