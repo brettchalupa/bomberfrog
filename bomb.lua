@@ -32,8 +32,9 @@ function M.update(dt, b)
   end
 
   for _, e in ipairs(State.enemies) do
-    if e.alive and not b.hits[e] and Util.circs_overlap(b, e) then
+    if e.alive and e.arrived and not b.hits[e] and Util.circs_overlap(b, e) then
       Enemy.hit(e, DAMAGE)
+      Explosion.spawn(e.x, e.y, 18)
       b.hits[e] = true
     end
 
@@ -50,11 +51,13 @@ end
 -- shockwave with a trail.
 local RING_COLORS = {
   gfx.COLOR_WHITE,
+  gfx.COLOR_WHITE,
   gfx.COLOR_PEACH,
+  gfx.COLOR_YELLOW,
   gfx.COLOR_ORANGE,
   gfx.COLOR_RED,
 }
-local RING_GAP = 4
+local RING_GAP = 5
 
 function M.draw(b)
   for i = 1, #RING_COLORS do

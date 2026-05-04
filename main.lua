@@ -5,6 +5,7 @@ Enemy = require("enemy")
 Bullet = require("bullet")
 Chip = require("chip")
 Bomb = require("bomb")
+Explosion = require("explosion")
 Fx = require("fx")
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
@@ -106,6 +107,7 @@ function _init()
     enemies = {},
     chips = {},
     bombs = {},
+    explosions = {},
     fx = Fx.init(),
   }
 
@@ -178,6 +180,15 @@ function _update(dt)
     end
   end
 
+  for i = #State.explosions, 1, -1 do
+    local ex = State.explosions[i]
+    Explosion.update(dt, ex)
+
+    if not ex.alive then
+      table.remove(State.explosions, i)
+    end
+  end
+
   local play_enemy_hit = false
   local pbullets = player.bullets
   for i = 1, #pbullets do
@@ -233,10 +244,6 @@ end
 function _draw(dt)
   gfx.clear(gfx.COLOR_BLUE)
 
-  for _, b in ipairs(State.bombs) do
-    Bomb.draw(b)
-  end
-
   for i = 1, #State.chips do
     Chip.draw(State.chips[i])
   end
@@ -250,6 +257,14 @@ function _draw(dt)
 
   for i = 1, #State.enemies do
     Enemy.draw(State.enemies[i])
+  end
+
+  for _, b in ipairs(State.bombs) do
+    Bomb.draw(b)
+  end
+
+  for _, ex in ipairs(State.explosions) do
+    Explosion.draw(ex)
   end
 
   if not State.player.alive then
