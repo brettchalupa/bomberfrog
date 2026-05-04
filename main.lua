@@ -3,6 +3,7 @@ Util = require("util")
 Player = require("player")
 Enemy = require("enemy")
 Bullet = require("bullet")
+Chip = require("chip")
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
 
@@ -102,6 +103,7 @@ function _init()
     t = 0,
     last_hit_sfx_t = 0,
     enemies = {},
+    chips = {}
   }
 
   init_enemies_for_wave()
@@ -152,8 +154,7 @@ function _update(dt)
     end
   end
   if play_enemy_hit and State.t - State.last_hit_sfx_t > HIT_SFX_MIN_GAP then
-    local sfx_idx = math.random(1, 4)
-    sfx.play("enemy_hit_" .. sfx_idx)
+    Util.play_random_sfx("enemy_hit", 4)
     State.last_hit_sfx_t = State.t
   end
 
@@ -176,6 +177,20 @@ function _update(dt)
     end
   end
 
+  local player_firing = input.down(input.BTN1)
+  for i = #State.chips, 1, -1 do
+    local c = State.chips[i]
+    Chip.update(dt, c, player, player_firing)
+    if c.alive and player.alive and Util.circs_overlap(c, Player.collect_circ(player)) then
+      Util.play_random_sfx("collect_chip", 3)
+      player.chip_count += 1
+      c.alive = false
+    end
+    if not c.alive then
+      table.remove(State.chips, i)
+    end
+  end
+
   if not player.alive then
     if input.pressed(input.BTN2) then
       sfx.play("confirm")
@@ -188,6 +203,15 @@ end
 
 function _draw(dt)
   gfx.clear(gfx.COLOR_BLUE)
+
+  for i = 1, #State.chips do
+    Chip.draw(State.chips[i])
+  end
+
+  if usagi.IS_DEV and State.player.alive then
+    local r = input.down(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
+    gfx.circ(State.player.x + SPR_SIZE / 2, State.player.y + SPR_SIZE / 2, r, gfx.COLOR_WHITE)
+  end
 
   Player.draw(dt, State.player)
 

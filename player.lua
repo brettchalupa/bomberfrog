@@ -42,7 +42,8 @@ function M.init()
     speed = 120,       -- px/s
     fire_delay = 0.1,  -- s
     fire_cooldown = 0, -- s
-    bullets = init_bullets()
+    bullets = init_bullets(),
+    chip_count = 0,
   }
 
   -- uncomment to make invincible in dev mode
@@ -82,8 +83,7 @@ function M.update(dt, p)
   end
 
   if p.fire_cooldown <= 0 and input.down(input.BTN1) then
-    local sfx_idx = math.random(1, 4)
-    sfx.play("player_shoot_" .. sfx_idx)
+    Util.play_random_sfx("player_shoot", 4)
     p.fire_cooldown = p.fire_delay
     local x = p.x + 10
     local bullet_idx = find_available_bullet_idx(p.bullets)
@@ -142,6 +142,14 @@ function M.hit_circ(p)
     x = p.x + SPR_SIZE / 2,
     y = p.y + SPR_SIZE / 2,
     r = 2
+  }
+end
+
+function M.collect_circ(p)
+  return {
+    x = p.x + SPR_SIZE / 2,
+    y = p.y + SPR_SIZE / 2,
+    r = 8
   }
 end
 

@@ -19,6 +19,10 @@ function M.clamp(min, val, max)
   return val
 end
 
+function M.play_random_sfx(prefix, count)
+  sfx.play(prefix .. "_" .. math.random(1, count))
+end
+
 function M.circs_overlap(c1, c2)
   local dx = c1.x - c2.x
   local dy = c1.y - c2.y

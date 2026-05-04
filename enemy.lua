@@ -12,6 +12,7 @@ M.kind = {
   popcorn = {
     hp = 20,
     r = 7,
+    chips = 3,
     death_sfx = "popcorn_death",
     sequence = {
       { fn = Pattern.fire_aimed, params = {}, count = 6, delay = 0.07, start_gap = 0.8 },
@@ -20,6 +21,7 @@ M.kind = {
   boss = {
     hp = 200,
     r = 12,
+    chips = 8,
     death_sfx = "boss_death",
     sequence = {
       { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 1.5 },
@@ -42,6 +44,7 @@ function M.init(kind, x, y, dest)
     hit_timer = 0,
     particles = {},
     bullets = {},
+    chips = kind.chips,
     fire_countdown = first_phase.start_gap, -- counts down until next shot; secs
     spiral_angle = 0,
     sequence = sequence,
@@ -73,6 +76,8 @@ function M.hit(e)
     sfx.play(e.death_sfx or "popcorn_death")
     e.alive = false
     emit_death_particles(e)
+    assert(e.chips, "nil chips for e")
+    Chip.drop(e.chips, e.x, e.y)
   end
 end
 
