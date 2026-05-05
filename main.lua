@@ -1,5 +1,4 @@
 SPR_SIZE = 16
-Util = require("util")
 Player = require("player")
 Enemy = require("enemy")
 Bullet = require("bullet")
@@ -145,11 +144,11 @@ local function update_chips(dt, player)
   for i = #State.chips, 1, -1 do
     local c = State.chips[i]
     Chip.update(dt, c, player, player_firing)
-    if c.alive and player.alive and Util.circs_overlap(c, Player.collect_circ(player)) then
-      Util.play_random_sfx("collect_chip", 3)
+    if c.alive and player.alive and util.circ_overlap(c, Player.collect_circ(player)) then
+      sfx.play("collect_chip_" .. math.random(1, 3))
       local prev_count = player.chip_count
       player.chip_count += 1
-      player.chip_count = Util.min(player.chip_count, Bomb.CHIP_COST)
+      player.chip_count = math.min(player.chip_count, Bomb.CHIP_COST)
       if prev_count ~= Bomb.CHIP_COST and Player.bombable(player) then
         sfx.play("bomb_ready")
       end
@@ -208,7 +207,7 @@ function _update(dt)
       for j = 1, #State.enemies do
         local e = State.enemies[j]
 
-        if b.alive and e.alive and Util.circs_overlap(b, e) then
+        if b.alive and e.alive and util.circ_overlap(b, e) then
           play_enemy_hit = true
           b.alive = false
           Enemy.hit(e)
@@ -217,7 +216,7 @@ function _update(dt)
     end
   end
   if play_enemy_hit and State.t - State.last_hit_sfx_t > HIT_SFX_MIN_GAP then
-    Util.play_random_sfx("enemy_hit", 4)
+    sfx.play("enemy_hit_" .. math.random(1, 4))
     State.last_hit_sfx_t = State.t
   end
 
@@ -231,7 +230,7 @@ function _update(dt)
 
         if b.alive and player.alive then
           local b_hit_circ = { x = b.x, y = b.y, r = b.r / 2 }
-          if Util.circs_overlap(b_hit_circ, Player.hit_circ(player)) then
+          if util.circ_overlap(b_hit_circ, Player.hit_circ(player)) then
             b.alive = false
             Player.hit(player)
           end

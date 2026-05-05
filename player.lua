@@ -103,7 +103,7 @@ function M.update(dt, p)
   end
 
   if p.fire_cooldown <= 0 and input.held(input.BTN1) then
-    Util.play_random_sfx("player_shoot", 4)
+    sfx.play("player_shoot_" .. math.random(1, 4))
     p.fire_cooldown = p.fire_delay
     local x = p.x + 10
     local bullet_idx = find_available_bullet_idx(p.bullets)
@@ -120,11 +120,11 @@ function M.update(dt, p)
     end
   end
 
-  delta = Util.normalize_vec(delta)
+  delta = util.vec_normalize(delta)
   p.x += delta.x * p.speed * dt
-  p.x = Util.clamp(0, p.x, usagi.GAME_W - SPR_SIZE)
+  p.x = util.clamp(p.x, 0, usagi.GAME_W - SPR_SIZE)
   p.y += delta.y * p.speed * dt
-  p.y = Util.clamp(0, p.y, usagi.GAME_H - SPR_SIZE)
+  p.y = util.clamp(p.y, 0, usagi.GAME_H - SPR_SIZE)
 
   for i = 1, #p.bullets do
     local b = Bullet.update(dt, p.bullets[i])

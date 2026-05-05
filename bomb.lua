@@ -32,14 +32,14 @@ function M.update(dt, b)
   end
 
   for _, e in ipairs(State.enemies) do
-    if e.alive and e.arrived and not b.hits[e] and Util.circs_overlap(b, e) then
+    if e.alive and e.arrived and not b.hits[e] and util.circ_overlap(b, e) then
       Enemy.hit(e, DAMAGE)
       Explosion.spawn(e.x, e.y, 18)
       b.hits[e] = true
     end
 
     for _, bullet in ipairs(e.bullets) do
-      if bullet.alive and Util.circs_overlap(b, bullet) then
+      if bullet.alive and util.circ_overlap(b, bullet) then
         bullet.alive = false
       end
     end
