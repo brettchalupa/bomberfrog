@@ -6,7 +6,6 @@ Chip = require("chip")
 Bomb = require("bomb")
 Explosion = require("explosion")
 Pixels = require("pixels")
-Fx = require("fx")
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
 
@@ -109,7 +108,6 @@ function _init()
     bombs = {},
     explosions = {},
     pixels = {},
-    fx = Fx.init(),
   }
 
   init_enemies_for_wave()
@@ -161,11 +159,6 @@ local function update_chips(dt, player)
 end
 
 function _update(dt)
-  Fx.update(dt)
-  if Fx.is_hitstopped() then
-    return
-  end
-
   State.t += dt
 
   local player = State.player

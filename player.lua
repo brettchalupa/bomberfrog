@@ -67,7 +67,7 @@ local function try_bomb(p)
     sfx.play("bomb")
     table.insert(State.bombs, Bomb.init(p.x + SPR_SIZE / 2, p.y + SPR_SIZE / 2))
     p.chip_count = 0
-    Fx.hitstop(0.1)
+    effect.hitstop(0.1)
 
     return true
   else
@@ -151,16 +151,21 @@ function M.draw(dt, p)
 end
 
 function M.hit(p)
-  if not p.invincible then
-    sfx.play("player_death")
-    if not try_bomb(p) then
-      p.alive = false
-      local cx = p.x + SPR_SIZE / 2
-      local cy = p.y + SPR_SIZE / 2
-      Explosion.spawn(cx, cy, 28)
-      Pixels.spawn(cx, cy, 18, gfx.COLOR_DARK_GREEN)
-      Pixels.spawn(cx, cy, 10, gfx.COLOR_PINK)
-    end
+  if p.invincible then
+    return
+  end
+  sfx.play("player_death")
+  if try_bomb(p) then
+    effect.screen_shake(0.25, 3)
+  else
+    p.alive = false
+    effect.screen_shake(0.5, 5)
+    effect.slow_mo(0.4, 0.3)
+    local cx = p.x + SPR_SIZE / 2
+    local cy = p.y + SPR_SIZE / 2
+    Explosion.spawn(cx, cy, 28)
+    Pixels.spawn(cx, cy, 18, gfx.COLOR_DARK_GREEN)
+    Pixels.spawn(cx, cy, 10, gfx.COLOR_PINK)
   end
 end
 
