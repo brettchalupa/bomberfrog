@@ -161,6 +161,7 @@ function M.hit(p)
     p.alive = false
     effect.screen_shake(0.5, 5)
     effect.slow_mo(0.4, 0.3)
+    effect.flash(0.08, gfx.COLOR_WHITE)
     local cx = p.x + SPR_SIZE / 2
     local cy = p.y + SPR_SIZE / 2
     Explosion.spawn(cx, cy, 28)
