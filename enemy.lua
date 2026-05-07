@@ -10,6 +10,7 @@ local ARRIVE_DIST = 1      -- px
 M.kind = {
   popcorn = {
     name = "Popcorn",
+    color = gfx.COLOR_INDIGO,
     hp = 20,
     r = 7,
     chips = 6,
@@ -18,10 +19,37 @@ M.kind = {
       { fn = Pattern.fire_aimed, params = {}, count = 6, delay = 0.07, start_gap = 0.8 },
     }
   },
-  boss = {
-    name = "Boss",
-    hp = 200,
+  kernel = {
+    name = "Kernel",
+    color = gfx.COLOR_DARK_PURPLE,
+    hp = 28,
+    r = 9,
+    chips = 10,
+    death_sfx = "popcorn_death",
+    sequence = {
+      { fn = Pattern.fire_aimed, params = { speed = 240 }, count = 6, delay = 0.02, start_gap = 0.4 },
+      { fn = Pattern.fire_aimed, params = { speed = 240 }, count = 8, delay = 0.02, start_gap = 0.6 },
+    }
+  },
+  flower = {
+    name = "Flower",
+    color = gfx.COLOR_DARK_GREEN,
+    hp = 40,
     r = 12,
+    chips = 20,
+    death_sfx = "popcorn_death",
+    sequence = {
+      { fn = Pattern.fire_ring, params = { n = 20 }, count = 1,  delay = 0.08, start_gap = 1 },
+      { fn = Pattern.fire_ring, params = { n = 20 }, count = 4,  delay = 0.08, start_gap = 1 },
+      { fn = Pattern.fire_ring, params = { n = 20 }, count = 8,  delay = 0.08, start_gap = 1 },
+      { fn = Pattern.fire_ring, params = { n = 40 }, count = 10, delay = 0.08, start_gap = 1.5 },
+    }
+  },
+  midboss = {
+    name = "Midboss",
+    color = gfx.COLOR_RED,
+    hp = 200,
+    r = 16,
     chips = 12,
     death_sfx = "boss_death",
     sequence = {
@@ -38,6 +66,7 @@ function M.init(kind, x, y, dest)
   local first_phase = sequence[1]
   return {
     name = kind.name,
+    color = kind.color,
     hp = kind.hp,
     alive = true,
     x = x,
@@ -147,11 +176,9 @@ function M.draw(e)
   if e.hit_timer > 0 then
     gfx.circ_fill(e.x, e.y, e.r, gfx.COLOR_ORANGE)
   else
-    gfx.circ_fill(e.x, e.y, e.r, gfx.COLOR_RED)
-    gfx.circ_fill(e.x, e.y, 8, gfx.COLOR_WHITE)
-    gfx.circ_fill(e.x, e.y, 6, gfx.COLOR_RED)
+    gfx.circ_fill(e.x, e.y, e.r, e.color)
     gfx.circ_fill(e.x, e.y, 4, gfx.COLOR_WHITE)
-    gfx.circ_fill(e.x, e.y, 2, gfx.COLOR_RED)
+    gfx.circ_fill(e.x, e.y, 2, e.color)
   end
 
   for i = 1, #e.bullets do

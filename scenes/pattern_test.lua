@@ -21,7 +21,13 @@ function M.update(dt, _state)
     PatternTestState.current_enemy = init_enemy(Enemy.kind.popcorn)
   elseif input.key_pressed(input.KEY_2) then
     sfx.play("confirm")
-    PatternTestState.current_enemy = init_enemy(Enemy.kind.boss)
+    PatternTestState.current_enemy = init_enemy(Enemy.kind.kernel)
+  elseif input.key_pressed(input.KEY_3) then
+    sfx.play("confirm")
+    PatternTestState.current_enemy = init_enemy(Enemy.kind.flower)
+  elseif input.key_pressed(input.KEY_4) then
+    sfx.play("confirm")
+    PatternTestState.current_enemy = init_enemy(Enemy.kind.midboss)
   end
 
   if input.pressed(input.BTN2) then
@@ -41,8 +47,8 @@ function M.draw(dt, _state)
 
   Enemy.draw(PatternTestState.current_enemy)
 
-  gfx.text(PatternTestState.current_enemy.name, 200, 10, gfx.COLOR_PEACH)
-  gfx.text("sequence_idx: " .. PatternTestState.current_enemy.sequence_idx, 200, 20, gfx.COLOR_GREEN)
+  gfx.text(PatternTestState.current_enemy.name, 200, 10, gfx.COLOR_BLACK)
+  gfx.text("sequence_idx: " .. PatternTestState.current_enemy.sequence_idx, 200, 20, gfx.COLOR_DARK_GREEN)
 end
 
 return M

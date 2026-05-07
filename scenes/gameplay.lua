@@ -36,11 +36,27 @@ local LEVELS = {
           dest = DEST[2]
         },
         {
-          kind = Enemy.kind.popcorn,
+          kind = Enemy.kind.kernel,
           dest = DEST[3]
         },
       },
       [4] = {
+        {
+          kind = Enemy.kind.kernel,
+          dest = DEST[1]
+        },
+        {
+          kind = Enemy.kind.kernel,
+          dest = DEST[2]
+        },
+      },
+      [5] = {
+        {
+          kind = Enemy.kind.flower,
+          dest = DEST[3]
+        },
+      },
+      [6] = {
         {
           kind = Enemy.kind.popcorn,
           dest = DEST[1]
@@ -50,17 +66,17 @@ local LEVELS = {
           dest = DEST[2]
         },
         {
-          kind = Enemy.kind.boss,
+          kind = Enemy.kind.midboss,
           dest = DEST[3]
         }
       },
-      [5] = {
+      [7] = {
         {
-          kind = Enemy.kind.boss,
+          kind = Enemy.kind.midboss,
           dest = DEST[1]
         },
         {
-          kind = Enemy.kind.boss,
+          kind = Enemy.kind.midboss,
           dest = DEST[2]
         },
       }
