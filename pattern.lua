@@ -35,6 +35,36 @@ function M.fire_fan(e, player, params)
   end
 end
 
+-- n is bullets fired; gap_n is slots skipped. spread covers all slots
+-- (n + gap_n), so wider gap also widens the wall. gap_shift offsets the gap in
+-- slot units (-ve = left of aim). for centered output, n should be even.
+function M.fire_wall(e, player, params)
+  local speed = params.speed or BULLET_SPEED
+  local spread = params.spread or math.pi * 5 / 6
+  local n = params.n
+  local gap_n = params.gap_n or 2
+  local slots = n + gap_n
+  local base = params.base_angle
+  if not base then
+    local center = Player.center(player)
+    base = math.atan(center.y - e.y, center.x - e.x)
+  end
+  local shift = params.gap_shift or 0
+  local gap_lo = math.floor(n / 2) + 1 + shift
+  if gap_lo < 1 then gap_lo = 1 end
+  if gap_lo > slots - gap_n + 1 then gap_lo = slots - gap_n + 1 end
+  local gap_hi = gap_lo + gap_n - 1
+  for i = 1, slots do
+    if i < gap_lo or i > gap_hi then
+      local t = slots == 1 and 0 or (i - 1) / (slots - 1) - 0.5
+      local a = base + t * spread
+      local vel = { x = math.cos(a) * speed, y = math.sin(a) * speed }
+      local kind = params.kind or Bullet.kind.ENEMY_DEFAULT
+      shoot(e, vel, kind)
+    end
+  end
+end
+
 function M.fire_ring(e, _player, params)
   local speed = params.speed or BULLET_SPEED
   local n = params.n

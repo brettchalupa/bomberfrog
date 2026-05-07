@@ -11,7 +11,7 @@ end
 function M.init(_state)
   PatternTestState = {
     current_enemy = init_enemy(Enemy.kind.popcorn),
-    mock_player = { x = 80, y = y_cent() - SPR_SIZE / 2, s = SPR_SIZE }
+    player = Player.init()
   }
 end
 
@@ -31,6 +31,9 @@ function M.update(dt, _state)
   elseif input.key_pressed(input.KEY_5) then
     sfx.play("confirm")
     PatternTestState.current_enemy = init_enemy(Enemy.kind.midboss)
+  elseif input.key_pressed(input.KEY_6) then
+    sfx.play("confirm")
+    PatternTestState.current_enemy = init_enemy(Enemy.kind.boss)
   end
 
   if input.pressed(input.BTN2) then
@@ -38,15 +41,16 @@ function M.update(dt, _state)
     Scene.switch_to(Scene.KEY.MAIN_MENU)
   end
 
-  Enemy.update(dt, PatternTestState.current_enemy, PatternTestState.mock_player)
+  Player.update(dt, PatternTestState.player)
+  Enemy.update(dt, PatternTestState.current_enemy, PatternTestState.player)
 end
 
 function M.draw(dt, _state)
   gfx.clear(gfx.COLOR_BLUE)
   gfx.text("BULLET PATTERN TEST", 10, 10, gfx.COLOR_WHITE)
 
-  local player = PatternTestState.mock_player
-  gfx.rect_fill(player.x, player.y, player.s, player.s, gfx.COLOR_PEACH)
+  local player = PatternTestState.player
+  Player.draw(dt, player)
 
   Enemy.draw(PatternTestState.current_enemy)
 

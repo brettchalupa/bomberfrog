@@ -66,10 +66,26 @@ M.kind = {
     chips = 12,
     death_sfx = "boss_death",
     sequence = {
-      { fn = Pattern.fire_aimed,  params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },      count = 10, delay = 0.03, start_gap = 1.5 },
-      { fn = Pattern.fire_aimed,  params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },      count = 10, delay = 0.03, start_gap = 0.5 },
-      { fn = Pattern.fire_ring,   params = { n = 12, speed, 180, kind = Bullet.kind.ENEMY_BIG }, count = 5,  delay = 0.08, start_gap = 2 },
-      { fn = Pattern.fire_spiral, params = { n = 6, spin = 0.15 },                               count = 10, delay = 0.04, start_gap = 3 },
+      { fn = Pattern.fire_aimed,  params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },       count = 10, delay = 0.03, start_gap = 1.5 },
+      { fn = Pattern.fire_aimed,  params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },       count = 10, delay = 0.03, start_gap = 0.5 },
+      { fn = Pattern.fire_ring,   params = { n = 12, speed = 180, kind = Bullet.kind.ENEMY_BIG }, count = 5,  delay = 0.08, start_gap = 2 },
+      { fn = Pattern.fire_spiral, params = { n = 6, spin = 0.15 },                                count = 10, delay = 0.04, start_gap = 3 },
+    }
+  },
+  boss = {
+    name = "Boss",
+    color = gfx.COLOR_RED,
+    hp = 400,
+    r = 24,
+    chips = 12,
+    death_sfx = "boss_death",
+    sequence = {
+      { fn = Pattern.fire_wall,  params = { n = 6, base_angle = math.pi, gap_n = 4, gap_shift = 3, spread = math.pi / 4, speed = 100 },        count = 16, delay = 0.15, start_gap = 1.0 },
+      { fn = Pattern.fire_aimed, params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },                                                     count = 10, delay = 0.03, start_gap = 1.3 },
+      { fn = Pattern.fire_aimed, params = { speed = 120, kind = Bullet.kind.ENEMY_LARGE },                                                     count = 20, delay = 0.05, start_gap = 1.0 },
+      { fn = Pattern.fire_wall,  params = { n = 6, base_angle = math.pi - 0.5, gap_n = 4, gap_shift = -3, spread = math.pi / 3, speed = 100 }, count = 16, delay = 0.15, start_gap = 1.0 },
+      { fn = Pattern.fire_aimed, params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },                                                     count = 10, delay = 0.03, start_gap = 1.3 },
+      { fn = Pattern.fire_wall,  params = { n = 6, base_angle = math.pi + 0.5, gap_n = 4, gap_shift = 3, spread = math.pi / 4, speed = 100 },  count = 16, delay = 0.15, start_gap = 1.0 },
     }
   }
 }
