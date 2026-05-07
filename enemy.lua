@@ -27,8 +27,8 @@ M.kind = {
     chips = 10,
     death_sfx = "popcorn_death",
     sequence = {
-      { fn = Pattern.fire_aimed, params = { speed = 240 }, count = 6, delay = 0.02, start_gap = 0.4 },
-      { fn = Pattern.fire_aimed, params = { speed = 240 }, count = 8, delay = 0.02, start_gap = 0.6 },
+      { fn = Pattern.fire_aimed, params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL }, count = 6, delay = 0.02, start_gap = 0.4 },
+      { fn = Pattern.fire_aimed, params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL }, count = 8, delay = 0.02, start_gap = 0.6 },
     }
   },
   flower = {
@@ -53,10 +53,10 @@ M.kind = {
     chips = 12,
     death_sfx = "boss_death",
     sequence = {
-      { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 1.5 },
-      { fn = Pattern.fire_aimed,  params = { speed = 240 },        count = 10, delay = 0.05, start_gap = 0.5 },
-      { fn = Pattern.fire_ring,   params = { n = 12 },             count = 5,  delay = 0.08, start_gap = 2 },
-      { fn = Pattern.fire_spiral, params = { n = 6, spin = 0.15 }, count = 10, delay = 0.04, start_gap = 3 },
+      { fn = Pattern.fire_aimed,  params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },      count = 10, delay = 0.03, start_gap = 1.5 },
+      { fn = Pattern.fire_aimed,  params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },      count = 10, delay = 0.03, start_gap = 0.5 },
+      { fn = Pattern.fire_ring,   params = { n = 12, speed, 180, kind = Bullet.kind.ENEMY_BIG }, count = 5,  delay = 0.08, start_gap = 2 },
+      { fn = Pattern.fire_spiral, params = { n = 6, spin = 0.15 },                               count = 10, delay = 0.04, start_gap = 3 },
     }
   }
 }

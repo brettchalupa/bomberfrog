@@ -11,7 +11,7 @@ end
 function M.init(_state)
   PatternTestState = {
     current_enemy = init_enemy(Enemy.kind.popcorn),
-    mock_player = { x = 80, y = y_cent(), r = 8 }
+    mock_player = { x = 80, y = y_cent() - SPR_SIZE / 2, s = SPR_SIZE }
   }
 end
 
@@ -43,7 +43,7 @@ function M.draw(dt, _state)
   gfx.text("BULLET PATTERN TEST", 10, 10, gfx.COLOR_WHITE)
 
   local player = PatternTestState.mock_player
-  gfx.circ_fill(player.x, player.y, player.r, gfx.COLOR_PEACH)
+  gfx.rect_fill(player.x, player.y, player.s, player.s, gfx.COLOR_PEACH)
 
   Enemy.draw(PatternTestState.current_enemy)
 

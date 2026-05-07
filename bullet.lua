@@ -2,13 +2,19 @@ local M = {}
 
 M.kind = {
   PLAYER = 1,
-  ENEMY = 2,
+  ENEMY_DEFAULT = 2,
+  ENEMY_SMALL = 3,
+  ENEMY_BIG = 4,
 }
 
 function M.fire(x, y, vel, kind)
   local r = 4
-  if kind == M.kind.ENEMY then
+  if kind == M.kind.ENEMY_DEFAULT then
     r = 8
+  elseif kind == M.kind.ENEMY_SMALL then
+    r = 6
+  elseif kind == M.kind.ENEMY_BIG then
+    r = 10
   end
   return {
     alive = true,
@@ -36,7 +42,11 @@ end
 function M.draw(b)
   if b.alive then
     local color = gfx.COLOR_RED
-    if b.kind == M.kind.ENEMY then
+    if b.kind == M.kind.ENEMY_DEFAULT then
+      color = gfx.COLOR_DARK_PURPLE
+    elseif b.kind == M.kind.ENEMY_SMALL then
+      color = gfx.COLOR_DARK_BLUE
+    elseif b.kind == M.kind.ENEMY_BIG then
       color = gfx.COLOR_DARK_PURPLE
     end
     gfx.circ_fill(b.x, b.y, b.r, color)
@@ -53,7 +63,7 @@ function M.hit_circ(b)
   local circ = { x = b.x, y = b.y, r = b.r }
 
   -- bullet hit circles are smaller for enemy bullets
-  if b.kind == M.kind.ENEMY then
+  if b.kind == M.kind.ENEMY_DEFAULT or b.kind == M.kind.ENEMY_SMALL or b.kind == M.kind.ENEMY_BIG then
     circ.r = circ.r / 2
   end
 
