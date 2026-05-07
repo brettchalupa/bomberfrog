@@ -147,10 +147,14 @@ function M.draw(dt, p)
     return
   end
 
+  gfx.rect_fill(p.x + SPR_SIZE - 7, p.y - 5, 6, 6, gfx.COLOR_DARK_GREEN)
+  gfx.rect_fill(p.x + SPR_SIZE - 5, p.y - 4, 3, 3, gfx.COLOR_BLACK)
+  gfx.rect_fill(p.x + SPR_SIZE - 14, p.y - 5, 6, 6, gfx.COLOR_DARK_GREEN)
+  gfx.rect_fill(p.x + SPR_SIZE - 12, p.y - 4, 3, 3, gfx.COLOR_BLACK)
   gfx.rect_fill(p.x, p.y, SPR_SIZE, SPR_SIZE, gfx.COLOR_DARK_GREEN)
   gfx.rect_fill(p.x + 6, p.y + 6, SPR_SIZE - 12, SPR_SIZE - 12, gfx.COLOR_PINK)
   local hit = M.hit_circ(p)
-  gfx.circ_fill(hit.x, hit.y, hit.r, gfx.COLOR_PINK)
+  gfx.circ_fill(hit.x + 1, hit.y, hit.r + 1, gfx.COLOR_PINK)
 
   if usagi.IS_DEV then
     if p.invincible then

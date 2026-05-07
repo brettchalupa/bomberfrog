@@ -236,7 +236,7 @@ function M.update(dt, state)
   if not player.alive then
     if input.pressed(input.BTN2) then
       sfx.play("confirm")
-      _init()
+      M.init(state)
     end
   end
 
