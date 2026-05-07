@@ -181,6 +181,12 @@ function M.draw(e)
     gfx.circ_fill(e.x, e.y, 2, e.color)
   end
 
+  if usagi.IS_DEV then
+    if State.draw_debug then
+      gfx.circ(e.x, e.y, e.r, gfx.COLOR_RED)
+    end
+  end
+
   for i = 1, #e.bullets do
     Bullet.draw(e.bullets[i])
   end

@@ -41,7 +41,23 @@ function M.draw(b)
     end
     gfx.circ_fill(b.x, b.y, b.r, color)
     gfx.circ_fill(b.x, b.y, b.r - 2, gfx.COLOR_WHITE)
+
+    if State.draw_debug then
+      local hitc = M.hit_circ(b)
+      gfx.circ(hitc.x, hitc.y, hitc.r, gfx.COLOR_RED)
+    end
   end
+end
+
+function M.hit_circ(b)
+  local circ = { x = b.x, y = b.y, r = b.r }
+
+  -- bullet hit circles are smaller for enemy bullets
+  if b.kind == M.kind.ENEMY then
+    circ.r = circ.r / 2
+  end
+
+  return circ
 end
 
 return M

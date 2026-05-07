@@ -16,6 +16,7 @@ function _init()
   input.set_mouse_visible(false)
   State = {
     t = 0,
+    draw_debug = false,
   }
 
   Scene.switch_to(Scene.KEY.MAIN_MENU)

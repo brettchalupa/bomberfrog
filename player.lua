@@ -152,8 +152,15 @@ function M.draw(dt, p)
   local hit = M.hit_circ(p)
   gfx.circ_fill(hit.x, hit.y, hit.r, gfx.COLOR_PINK)
 
-  if usagi.IS_DEV and p.invincible then
-    gfx.text("invincible", p.x - 18, p.y + SPR_SIZE, gfx.COLOR_RED)
+  if usagi.IS_DEV then
+    if p.invincible then
+      gfx.text("invincible", p.x - 18, p.y + SPR_SIZE, gfx.COLOR_RED)
+    end
+
+    if State.draw_debug then
+      local hitc = M.hit_circ(p)
+      gfx.circ(hitc.x, hitc.y, hitc.r, gfx.COLOR_RED)
+    end
   end
 
   for i = 1, #p.bullets do

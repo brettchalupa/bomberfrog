@@ -199,7 +199,7 @@ function M.update(dt, state)
       for j = 1, #state.enemies do
         local e = state.enemies[j]
 
-        if b.alive and e.alive and util.circ_overlap(b, e) then
+        if b.alive and e.alive and util.circ_overlap(Bullet.hit_circ(b), e) then
           play_enemy_hit = true
           b.alive = false
           Enemy.hit(e)
@@ -207,6 +207,7 @@ function M.update(dt, state)
       end
     end
   end
+
   if play_enemy_hit and state.t - state.last_hit_sfx_t > HIT_SFX_MIN_GAP then
     sfx.play("enemy_hit_" .. math.random(1, 4))
     state.last_hit_sfx_t = state.t
@@ -221,8 +222,7 @@ function M.update(dt, state)
         local b = e.bullets[j]
 
         if b.alive and player.alive then
-          local b_hit_circ = { x = b.x, y = b.y, r = b.r / 2 }
-          if util.circ_overlap(b_hit_circ, Player.hit_circ(player)) then
+          if util.circ_overlap(Bullet.hit_circ(b), Player.hit_circ(player)) then
             b.alive = false
             Player.hit(player)
           end
@@ -241,6 +241,12 @@ function M.update(dt, state)
   end
 
   try_advance_wave(state)
+
+  if usagi.IS_DEV then
+    if input.key_pressed(input.KEY_0) then
+      state.draw_debug = not state.draw_debug
+    end
+  end
 end
 
 function M.draw(dt, state)
@@ -249,11 +255,6 @@ function M.draw(dt, state)
   for i = 1, #state.chips do
     Chip.draw(state.chips[i])
   end
-
-  -- if usagi.IS_DEV and state.player.alive then
-  --   local r = input.held(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
-  --   gfx.circ(state.player.x + SPR_SIZE / 2, state.player.y + SPR_SIZE / 2, r, gfx.COLOR_WHITE)
-  -- end
 
   Player.draw(dt, state.player)
 
@@ -291,11 +292,17 @@ function M.draw(dt, state)
     bg_color = gfx.COLOR_RED
   end
   gfx.rect_fill(7, usagi.GAME_H - 12 - 1, 4 * Bomb.CHIP_COST + 2, 8, bg_color)
+  gfx.rect_fill(8, usagi.GAME_H - 12, 4 * Bomb.CHIP_COST, 6, gfx.COLOR_LIGHT_GRAY)
   gfx.rect_fill(8, usagi.GAME_H - 12, 4 * state.player.chip_count, 6, Chip.color)
 
   -- dev-only helpers
   if usagi.IS_DEV then
     gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 10, 10, gfx.COLOR_INDIGO)
+
+    if state.player.alive and state.draw_debug then
+      local r = input.held(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
+      gfx.circ(state.player.x + SPR_SIZE / 2, state.player.y + SPR_SIZE / 2, r, gfx.COLOR_YELLOW)
+    end
   end
 end
 
