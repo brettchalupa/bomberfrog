@@ -102,6 +102,12 @@ function M.update(dt, p)
     try_bomb(p)
   end
 
+  if usagi.IS_DEV then
+    if input.key_pressed(input.KEY_1) then
+      p.invincible = not p.invincible
+    end
+  end
+
   if p.fire_cooldown <= 0 and input.held(input.BTN1) then
     sfx.play("player_shoot_" .. math.random(1, 4))
     p.fire_cooldown = p.fire_delay
