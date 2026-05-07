@@ -38,7 +38,7 @@ function M.update(dt, c, player, player_firing)
   local dist = math.sqrt(dx * dx + dy * dy)
   local pull_radius = player_firing and M.PULL_RADIUS_FIRING or M.PULL_RADIUS_IDLE
 
-  if dist > 0 and dist < pull_radius then
+  if player.alive and dist > 0 and dist < pull_radius then
     c.vel.x += (dx / dist) * PULL_STRENGTH * dt
     c.vel.y += (dy / dist) * PULL_STRENGTH * dt
   end
