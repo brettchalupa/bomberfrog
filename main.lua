@@ -6,30 +6,27 @@ Chip = require("chip")
 Bomb = require("bomb")
 Explosion = require("explosion")
 Pixels = require("pixels")
-
-local scene = {
-  gameplay = require("scenes.gameplay")
-}
+Scene = require("scene")
 
 function _config()
   return { name = "BOMBERFROG", game_id = "com.brettmakesgames.bomberfrog" }
 end
 
 function _init()
+  input.set_mouse_visible(false)
   State = {
     t = 0,
   }
-  scene.gameplay.init(State)
-  input.set_mouse_visible(false)
+
+  Scene.switch_to(Scene.main_menu)
 end
 
 function _update(dt)
   State.t += dt
 
-  scene.gameplay.update(dt, State)
+  State.current_scene.update(dt, State)
 end
 
 function _draw(dt)
-  gfx.clear(gfx.COLOR_BLUE)
-  scene.gameplay.draw(dt, State)
+  State.current_scene.draw(dt, State)
 end

@@ -228,6 +228,8 @@ function M.update(dt, state)
 end
 
 function M.draw(dt, state)
+  gfx.clear(gfx.COLOR_BLUE)
+
   for i = 1, #state.chips do
     Chip.draw(state.chips[i])
   end
