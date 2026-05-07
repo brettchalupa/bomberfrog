@@ -1,5 +1,7 @@
 # Bomberfrog
 
+**YOUR BOMB IS YOUR LIFE!**
+
 **In Development**
 
 Horizontal wave-based shmup by Brett Chalupa made with

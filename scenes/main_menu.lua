@@ -42,6 +42,7 @@ end
 function M.draw(dt, _state)
   gfx.clear(gfx.COLOR_BLACK)
   gfx.text("BOMBERFROG", 10, 10, gfx.COLOR_WHITE)
+  gfx.text("your bomb is your life!", 10, 20, gfx.COLOR_LIGHT_GRAY)
 
   for i = 1, #options do
     local value = options[i]
