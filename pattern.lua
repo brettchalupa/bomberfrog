@@ -20,6 +20,21 @@ function M.fire_aimed(e, player, params)
   shoot(e, vel, kind)
 end
 
+function M.fire_fan(e, player, params)
+  local speed = params.speed or BULLET_SPEED
+  local spread = params.spread or math.pi / 8
+  local n = params.n
+  local center = Player.center(player)
+  local base = math.atan(center.y - e.y, center.x - e.x)
+  for i = 1, n do
+    local t = n == 1 and 0 or (i - 1) / (n - 1) - 0.5
+    local a = base + t * spread
+    local vel = { x = math.cos(a) * speed, y = math.sin(a) * speed }
+    local kind = params.kind or Bullet.kind.ENEMY_DEFAULT
+    shoot(e, vel, kind)
+  end
+end
+
 function M.fire_ring(e, _player, params)
   local speed = params.speed or BULLET_SPEED
   local n = params.n

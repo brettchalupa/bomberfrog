@@ -31,6 +31,19 @@ M.kind = {
       { fn = Pattern.fire_aimed, params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL }, count = 8, delay = 0.02, start_gap = 0.6 },
     }
   },
+  shotgun = {
+    name = "Shotgun",
+    color = gfx.COLOR_DARK_GRAY,
+    hp = 34,
+    r = 10,
+    chips = 10,
+    death_sfx = "popcorn_death",
+    sequence = {
+      { fn = Pattern.fire_fan, params = { n = 4, speed = 180, kind = Bullet.kind.ENEMY_SMALL },                        count = 3, delay = 0.06, start_gap = 0.8 },
+      { fn = Pattern.fire_fan, params = { n = 5, speed = 180, kind = Bullet.kind.ENEMY_SMALL },                        count = 3, delay = 0.06, start_gap = 0.8 },
+      { fn = Pattern.fire_fan, params = { n = 10, spread = math.pi / 4, speed = 200, kind = Bullet.kind.ENEMY_SMALL }, count = 3, delay = 0.06, start_gap = 0.8 },
+    }
+  },
   flower = {
     name = "Flower",
     color = gfx.COLOR_DARK_GREEN,

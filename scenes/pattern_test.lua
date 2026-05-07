@@ -24,8 +24,11 @@ function M.update(dt, _state)
     PatternTestState.current_enemy = init_enemy(Enemy.kind.kernel)
   elseif input.key_pressed(input.KEY_3) then
     sfx.play("confirm")
-    PatternTestState.current_enemy = init_enemy(Enemy.kind.flower)
+    PatternTestState.current_enemy = init_enemy(Enemy.kind.shotgun)
   elseif input.key_pressed(input.KEY_4) then
+    sfx.play("confirm")
+    PatternTestState.current_enemy = init_enemy(Enemy.kind.flower)
+  elseif input.key_pressed(input.KEY_5) then
     sfx.play("confirm")
     PatternTestState.current_enemy = init_enemy(Enemy.kind.midboss)
   end
