@@ -279,7 +279,7 @@ function M.draw(dt, state)
     gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2, usagi.GAME_H / 2 - txt_h / 2, gfx.COLOR_DARK_PURPLE)
     gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2 - 1, usagi.GAME_H / 2 - txt_h / 2 - 1, gfx.COLOR_PEACH)
 
-    local txt2 = "press button 2 to restart"
+    local txt2 = "press " .. input.mapping_for(input.BTN2) .. " to restart"
     local txt2_w, txt2_h = usagi.measure_text(txt2)
     gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2, usagi.GAME_H / 2 - txt2_h / 2 + 14, gfx.COLOR_DARK_PURPLE)
     gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
