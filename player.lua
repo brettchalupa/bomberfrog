@@ -189,17 +189,26 @@ function M.hit(p)
 end
 
 function M.hit_circ(p)
+  local c = M.center(p)
   return {
-    x = p.x + SPR_SIZE / 2,
-    y = p.y + SPR_SIZE / 2,
+    x = c.x,
+    y = c.y,
     r = 2
   }
 end
 
-function M.collect_circ(p)
+function M.center(p)
   return {
     x = p.x + SPR_SIZE / 2,
     y = p.y + SPR_SIZE / 2,
+  }
+end
+
+function M.collect_circ(p)
+  local c = M.center(p)
+  return {
+    x = c.x,
+    y = c.y,
     r = 8
   }
 end

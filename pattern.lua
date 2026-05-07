@@ -13,7 +13,8 @@ end
 
 function M.fire_aimed(e, player, params)
   local speed = params.speed or BULLET_SPEED
-  local a = math.atan(player.y - e.y, player.x - e.x)
+  local center = Player.center(player)
+  local a = math.atan(center.y - e.y, center.x - e.x)
   local vel = { x = math.cos(a) * speed, y = math.sin(a) * speed }
   shoot(e, vel)
 end
