@@ -4,11 +4,12 @@ local M = {}
 
 local HIT_FLASH_TIME = 0.1 -- s
 local DEATH_PIXEL_COUNT = 24
-local FLY_IN_SPEED = 160 -- px/s
-local ARRIVE_DIST = 1    -- px
+local FLY_IN_SPEED = 160   -- px/s
+local ARRIVE_DIST = 1      -- px
 
 M.kind = {
   popcorn = {
+    name = "Popcorn",
     hp = 20,
     r = 7,
     chips = 6,
@@ -18,6 +19,7 @@ M.kind = {
     }
   },
   boss = {
+    name = "Boss",
     hp = 200,
     r = 12,
     chips = 12,
@@ -35,6 +37,7 @@ function M.init(kind, x, y, dest)
   local sequence = kind.sequence
   local first_phase = sequence[1]
   return {
+    name = kind.name,
     hp = kind.hp,
     alive = true,
     x = x,

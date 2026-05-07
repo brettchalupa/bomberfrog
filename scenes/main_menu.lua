@@ -32,7 +32,9 @@ function M.update(dt, _state)
   if input.pressed(input.BTN1) then
     sfx.play("confirm")
     if current_option == OPTION.PLAY then
-      Scene.switch_to(Scene.gameplay)
+      Scene.switch_to(Scene.KEY.GAMEPLAY)
+    elseif current_option == OPTION.PATTERN_TEST then
+      Scene.switch_to(Scene.KEY.PATTERN_TEST)
     end
   end
 end

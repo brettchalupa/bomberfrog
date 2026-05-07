@@ -39,9 +39,10 @@ function M.init()
     alive = true,
     x = 32,
     y = usagi.GAME_H / 2 - SPR_SIZE / 2,
-    speed = 120,       -- px/s
-    fire_delay = 0.1,  -- s
-    fire_cooldown = 0, -- s
+    speed = 120,        -- px/s
+    fire_delay = 0.1,   -- s
+    fire_cooldown = 0,  -- s
+    fire_armed = false, -- requires BTN1 release before first shot, so a press that triggered scene entry doesn't auto-fire
     bullets = init_bullets(),
     chip_count = 0,
   }
@@ -108,7 +109,11 @@ function M.update(dt, p)
     end
   end
 
-  if p.fire_cooldown <= 0 and input.held(input.BTN1) then
+  if not p.fire_armed and not input.held(input.BTN1) then
+    p.fire_armed = true
+  end
+
+  if p.fire_armed and p.fire_cooldown <= 0 and input.held(input.BTN1) then
     sfx.play("player_shoot_" .. math.random(1, 4))
     p.fire_cooldown = p.fire_delay
     local x = p.x + 10
