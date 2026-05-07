@@ -46,7 +46,7 @@ function M.update(dt, _state)
 end
 
 function M.draw(dt, _state)
-  gfx.clear(gfx.COLOR_BLUE)
+  gfx.clear(gfx.COLOR_DARK_BLUE)
   gfx.text("BULLET PATTERN TEST", 10, 10, gfx.COLOR_WHITE)
 
   local player = PatternTestState.player

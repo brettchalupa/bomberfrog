@@ -43,11 +43,11 @@ function M.draw(b)
   if b.alive then
     local color = gfx.COLOR_RED
     if b.kind == M.kind.ENEMY_DEFAULT then
-      color = gfx.COLOR_DARK_PURPLE
+      color = gfx.COLOR_ORANGE
     elseif b.kind == M.kind.ENEMY_SMALL then
-      color = gfx.COLOR_DARK_BLUE
+      color = gfx.COLOR_BLUE
     elseif b.kind == M.kind.ENEMY_BIG then
-      color = gfx.COLOR_DARK_PURPLE
+      color = gfx.COLOR_INDIGO
     end
     gfx.circ_fill(b.x, b.y, b.r, color)
     gfx.circ_fill(b.x, b.y, b.r - 2, gfx.COLOR_WHITE)

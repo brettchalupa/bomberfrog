@@ -179,6 +179,7 @@ function M.init(state)
   state.explosions = {}
   state.pixels = {}
 
+  Starfield.init()
   init_enemies_for_wave(state)
 end
 
@@ -228,6 +229,7 @@ end
 function M.update(dt, state)
   local player = state.player
 
+  Starfield.update(dt)
   Player.update(dt, player)
 
   for i = #state.bombs, 1, -1 do
@@ -316,7 +318,8 @@ function M.update(dt, state)
 end
 
 function M.draw(dt, state)
-  gfx.clear(gfx.COLOR_BLUE)
+  gfx.clear(gfx.COLOR_DARK_BLUE)
+  Starfield.draw()
 
   for i = 1, #state.chips do
     Chip.draw(state.chips[i])
@@ -357,15 +360,15 @@ function M.draw(dt, state)
   if Player.bombable(state.player) then
     bg_color = gfx.COLOR_RED
   end
-  gfx.rect_fill(7, usagi.GAME_H - 12 - 1, 4 * Bomb.CHIP_COST + 2, 8, bg_color)
-  gfx.rect_fill(8, usagi.GAME_H - 12, 4 * Bomb.CHIP_COST, 6, gfx.COLOR_LIGHT_GRAY)
-  gfx.rect_fill(8, usagi.GAME_H - 12, 4 * state.player.chip_count, 6, Chip.color)
+  gfx.rect_fill(7, 12 - 1, 4 * Bomb.CHIP_COST + 2, 8, bg_color)
+  gfx.rect_fill(8, 12, 4 * Bomb.CHIP_COST, 6, gfx.COLOR_LIGHT_GRAY)
+  gfx.rect_fill(8, 12, 4 * state.player.chip_count, 6, Chip.color)
 
   -- dev-only helpers
-  if usagi.IS_DEV then
-    gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 10, 10, gfx.COLOR_INDIGO)
+  if usagi.IS_DEV and state.draw_debug then
+    gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 240, 10, gfx.COLOR_INDIGO)
 
-    if state.player.alive and state.draw_debug then
+    if state.player.alive then
       local r = input.held(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
       gfx.circ(state.player.x + SPR_SIZE / 2, state.player.y + SPR_SIZE / 2, r, gfx.COLOR_YELLOW)
     end

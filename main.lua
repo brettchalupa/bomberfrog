@@ -1,11 +1,12 @@
 SPR_SIZE = 16
 Player = require("player")
-Enemy = require("enemy")
 Bullet = require("bullet")
+Enemy = require("enemy")
 Chip = require("chip")
 Bomb = require("bomb")
 Explosion = require("explosion")
 Pixels = require("pixels")
+Starfield = require("starfield")
 Scene = require("scene")
 
 function _config()
