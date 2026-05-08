@@ -82,6 +82,7 @@ M.kind = {
     r = 24,
     chips = 100,
     death_sfx = "boss_death",
+    alt_seq_hp_thres = 100,
     sequence = {
       { fn = Pattern.fire_aimed,  params = { speed = 240, kind = Bullet.kind.ENEMY_SMALL },                                                     count = 10, delay = 0.03, start_gap = 0.5 },
       { fn = Pattern.fire_aimed,  params = { speed = 120, kind = Bullet.kind.ENEMY_LARGE },                                                     count = 20, delay = 0.05, start_gap = 0.7 },
@@ -97,6 +98,12 @@ M.kind = {
       { fn = Pattern.fire_spiral, params = { n = 10, spin = 0.20, speed = 60, kind = Bullet.kind.ENEMY_BIG },                                   count = 12, delay = 0.04, start_gap = 0.3 },
       { fn = Pattern.fire_spiral, params = { n = 10, spin = 0.20, speed = 60, kind = Bullet.kind.ENEMY_BIG },                                   count = 12, delay = 0.04, start_gap = 0.3 },
       { fn = Pattern.fire_wall,   params = { n = 6, base_angle = math.pi, gap_n = 4, gap_shift = 3, spread = math.pi / 4, speed = 100 },        count = 16, delay = 0.15, start_gap = 3.0 },
+    },
+    alt_sequence = {
+      { fn = Pattern.fire_aimed,  params = { speed = 260, kind = Bullet.kind.ENEMY_SMALL },            count = 20, delay = 0.03, start_gap = 0.3 },
+      { fn = Pattern.fire_aimed,  params = { speed = 260, kind = Bullet.kind.ENEMY_SMALL },            count = 20, delay = 0.03, start_gap = 0.3 },
+      { fn = Pattern.fire_spiral, params = { n = 14, spin = 0.50, speed = 180 },                       count = 12, delay = 0.04, start_gap = 0.5 },
+      { fn = Pattern.fire_wall,   params = { n = 6, gap_n = 4, gap_shift = -3, spread = math.pi / 3 }, count = 12, delay = 0.15, start_gap = 0.5 },
     }
   }
 }
@@ -118,6 +125,9 @@ function M.init(kind, x, y, dest)
     fire_countdown = first_phase.start_gap, -- counts down until next shot; secs
     spiral_angle = 0,
     sequence = sequence,
+    alt_sequence = kind.alt_sequence,
+    alt_seq_hp_thres = kind.alt_seq_hp_thres,
+    alt_seq_active = false,
     sequence_idx = 1,
     pattern_shots_remaining = first_phase.count,
     dest = dest,
@@ -138,11 +148,22 @@ function M.hit(e, dmg)
   end
 end
 
+function M.activate_alt_sequence(e)
+  print("alt seq activated!")
+  e.sequence_idx = 1
+  e.alt_seq_active = true
+  e.sequence = e.alt_sequence
+end
+
 local function advance_phase(e)
   e.sequence_idx += 1
 
   if e.sequence_idx > #e.sequence then
     e.sequence_idx = 1
+  end
+
+  if e.alt_sequence and e.hp <= e.alt_seq_hp_thres and not e.alt_seq_active then
+    M.activate_alt_sequence(e)
   end
 
   local phase = e.sequence[e.sequence_idx]
@@ -219,6 +240,10 @@ function M.draw(e)
     gfx.circ_fill(e.x, e.y, e.r, e.color)
     gfx.circ_fill(e.x, e.y, 4, gfx.COLOR_WHITE)
     gfx.circ_fill(e.x, e.y, 2, e.color)
+
+    if e.alt_seq_active then
+      gfx.circ_fill(e.x, e.y, 12, gfx.COLOR_ORANGE)
+    end
   end
 
   if usagi.IS_DEV then

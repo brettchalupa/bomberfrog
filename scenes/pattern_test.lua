@@ -36,6 +36,13 @@ function M.update(dt, _state)
     PatternTestState.current_enemy = init_enemy(Enemy.kind.boss)
   end
 
+  if input.key_pressed(input.KEY_N) then
+    local enemy = PatternTestState.current_enemy
+    if enemy.alt_sequence then
+      Enemy.activate_alt_sequence(enemy)
+    end
+  end
+
   if input.pressed(input.BTN2) then
     sfx.play("confirm")
     Scene.switch_to(Scene.KEY.MAIN_MENU)
