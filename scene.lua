@@ -14,6 +14,7 @@ M.KEY = {
 -- references don't go stale
 function M.switch_to(key)
   assert(M[key], "unknown scene: " .. tostring(key))
+  print("switch_to: " .. key)
 
   if State.current_scene == nil then
     State.current_scene = key

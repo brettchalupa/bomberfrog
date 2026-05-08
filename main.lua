@@ -8,6 +8,7 @@ Explosion = require("explosion")
 Pixels = require("pixels")
 Starfield = require("starfield")
 Scene = require("scene")
+Metadata = require("metadata")
 
 function _config()
   return { name = "BOMBERFROG", game_id = "com.brettmakesgames.bomberfrog" }
@@ -24,6 +25,8 @@ function _init()
 end
 
 function _update(dt)
+  State.t += dt
+
   assert(State.current_scene)
 
   if State.pending_scene then
@@ -35,13 +38,11 @@ function _update(dt)
     State.current_scene = State.pending_scene
     State.pending_scene = nil
 
-    local next_scene = Scene.current()
-    if next_scene.init then
-      next_scene.init(State)
+    local new_scene = Scene.current()
+    if new_scene.init then
+      new_scene.init(State)
     end
   end
-
-  State.t += dt
 
   Scene.current().update(dt, State)
 end

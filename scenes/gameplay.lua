@@ -2,153 +2,7 @@ local M = {}
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
 
-local DEST = {
-  { x = usagi.GAME_W - 80, y = 60 },
-  { x = usagi.GAME_W - 80, y = 120 },
-  { x = usagi.GAME_W - 44, y = 90 },
-}
-local LEVELS = {
-  [1] = {
-    waves = {
-      {
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[3]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[2]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[2]
-        },
-        {
-          kind = Enemy.kind.kernel,
-          dest = DEST[3]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.kernel,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.kernel,
-          dest = DEST[2]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.kernel,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.kernel,
-          dest = DEST[2]
-        },
-        {
-          kind = Enemy.kind.shotgun,
-          dest = DEST[3]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.flower,
-          dest = DEST[3]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[2]
-        },
-        {
-          kind = Enemy.kind.midboss,
-          dest = DEST[3]
-        }
-      },
-      {
-        {
-          kind = Enemy.kind.flower,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.shotgun,
-          dest = DEST[2]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.flower,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.flower,
-          dest = DEST[2]
-        },
-        {
-          kind = Enemy.kind.flower,
-          dest = DEST[3]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.flower,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.flower,
-          dest = DEST[2]
-        },
-        {
-          kind = Enemy.kind.kernel,
-          dest = DEST[3]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.midboss,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.midboss,
-          dest = DEST[2]
-        },
-      },
-      {
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[1]
-        },
-        {
-          kind = Enemy.kind.popcorn,
-          dest = DEST[2]
-        },
-        {
-          kind = Enemy.kind.boss,
-          dest = DEST[3]
-        },
-      },
-    }
-  }
-}
+local LEVELS = require("level")
 
 local function init_enemies_for_wave(state)
   local level_idx = state.level
@@ -170,6 +24,7 @@ end
 
 function M.init(state)
   state.level = 1
+  state.beat_level = false
   state.wave = 1
   state.player = Player.init()
   state.last_hit_sfx_t = 0
@@ -178,9 +33,17 @@ function M.init(state)
   state.bombs = {}
   state.explosions = {}
   state.pixels = {}
+  state.timer = 0
 
   Starfield.init()
   init_enemies_for_wave(state)
+
+  -- if not State.music_started then
+  --   state.music_started = true
+  -- music.loop("run")
+  -- music.loop("fire_horse")
+  -- music.loop("sax_loops")
+  -- end
 end
 
 local function all_enemies_dead(enemies)
@@ -193,12 +56,17 @@ local function all_enemies_dead(enemies)
   return true
 end
 
+local function beat_level(state)
+  state.beat_level = true
+  -- TODO: save if new fastest time for that level; save should be scoped for the version/build
+end
+
 local function try_advance_wave(state)
   if all_enemies_dead(state.enemies) then
     state.wave += 1
     -- NOTE: temp wrapping until we have concept of levels
     if state.wave > #LEVELS[state.level].waves then
-      state.wave = 1
+      beat_level(state)
     end
 
     init_enemies_for_wave(state)
@@ -228,6 +96,10 @@ end
 
 function M.update(dt, state)
   local player = state.player
+
+  if player.alive and not state.beat_level then
+    state.timer += dt
+  end
 
   Starfield.update(dt)
   Player.update(dt, player)
@@ -363,6 +235,14 @@ function M.draw(dt, state)
   gfx.rect_fill(7, 12 - 1, 4 * Bomb.CHIP_COST + 2, 8, bg_color)
   gfx.rect_fill(8, 12, 4 * Bomb.CHIP_COST, 6, gfx.COLOR_LIGHT_GRAY)
   gfx.rect_fill(8, 12, 4 * state.player.chip_count, 6, Chip.color)
+
+  -- HUD - timer (M:SS.cc speedrun format)
+  local minutes = math.floor(state.timer / 60)
+  local seconds = math.floor(state.timer % 60)
+  local centis = math.floor(state.timer * 100) % 100
+  local time_text = string.format("%d:%02d.%02d", minutes, seconds, centis)
+  local time_w, _time_h = usagi.measure_text(time_text)
+  gfx.text(time_text, usagi.GAME_W - time_w - 8, 8, gfx.COLOR_WHITE)
 
   -- dev-only helpers
   if usagi.IS_DEV and state.draw_debug then

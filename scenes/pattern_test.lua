@@ -13,6 +13,7 @@ function M.init(_state)
     current_enemy = init_enemy(Enemy.kind.popcorn),
     player = Player.init()
   }
+  music.stop()
 end
 
 function M.update(dt, _state)
