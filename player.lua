@@ -68,7 +68,7 @@ local function try_bomb(p)
     sfx.play("bomb")
     table.insert(State.bombs, Bomb.init(p.x + SPR_SIZE / 2, p.y + SPR_SIZE / 2))
     p.chip_count = 0
-    effect.hitstop(0.1)
+    effect.screen_shake(0.3, 2)
 
     return true
   else
@@ -181,6 +181,7 @@ function M.hit(p)
   sfx.play("player_death")
   if try_bomb(p) then
     effect.screen_shake(0.25, 3)
+    effect.slow_mo(0.2, 0.2)
   else
     p.alive = false
     effect.screen_shake(0.5, 5)
