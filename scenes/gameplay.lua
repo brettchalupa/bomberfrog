@@ -62,11 +62,12 @@ local function beat_level(state)
 end
 
 local function try_advance_wave(state)
-  if all_enemies_dead(state.enemies) then
+  if all_enemies_dead(state.enemies) and not state.beat_level then
     state.wave += 1
     -- NOTE: temp wrapping until we have concept of levels
     if state.wave > #LEVELS[state.level].waves then
       beat_level(state)
+      return
     end
 
     init_enemies_for_wave(state)
@@ -94,6 +95,14 @@ local function update_chips(dt, player)
   end
 end
 
+-- (M:SS.cc speedrun format)
+local function time_str(time)
+  local minutes = math.floor(time / 60)
+  local seconds = math.floor(time % 60)
+  local centis = math.floor(time * 100) % 100
+  return string.format("%d:%02d.%02d", minutes, seconds, centis)
+end
+
 function M.update(dt, state)
   local player = state.player
 
@@ -101,6 +110,7 @@ function M.update(dt, state)
     state.timer += dt
   end
 
+  try_advance_wave(state)
   Starfield.update(dt)
   Player.update(dt, player)
 
@@ -173,14 +183,12 @@ function M.update(dt, state)
 
   update_chips(dt, player)
 
-  if not player.alive then
+  if not player.alive or state.beat_level then
     if input.pressed(input.BTN2) then
       sfx.play("confirm")
       M.init(state)
     end
   end
-
-  try_advance_wave(state)
 
   if usagi.IS_DEV then
     if input.key_pressed(input.KEY_0) then
@@ -227,22 +235,34 @@ function M.draw(dt, state)
     gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
   end
 
-  -- HUD - bomb bar
-  local bg_color = gfx.COLOR_WHITE
-  if Player.bombable(state.player) then
-    bg_color = gfx.COLOR_RED
-  end
-  gfx.rect_fill(7, 12 - 1, 4 * Bomb.CHIP_COST + 2, 8, bg_color)
-  gfx.rect_fill(8, 12, 4 * Bomb.CHIP_COST, 6, gfx.COLOR_LIGHT_GRAY)
-  gfx.rect_fill(8, 12, 4 * state.player.chip_count, 6, Chip.color)
-
-  -- HUD - timer (M:SS.cc speedrun format)
-  local minutes = math.floor(state.timer / 60)
-  local seconds = math.floor(state.timer % 60)
-  local centis = math.floor(state.timer * 100) % 100
-  local time_text = string.format("%d:%02d.%02d", minutes, seconds, centis)
+  local time_text = time_str(state.timer)
   local time_w, _time_h = usagi.measure_text(time_text)
-  gfx.text(time_text, usagi.GAME_W - time_w - 8, 8, gfx.COLOR_WHITE)
+
+  if state.beat_level then
+    -- TODO: show if best time
+    gfx.text(time_text, usagi.GAME_W - time_w - 8, 8, gfx.COLOR_WHITE)
+
+    local txt = "WON!"
+    local txt_w, txt_h = usagi.measure_text(txt)
+    gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2, usagi.GAME_H / 2 - txt_h / 2, gfx.COLOR_DARK_PURPLE)
+    gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2 - 1, usagi.GAME_H / 2 - txt_h / 2 - 1, gfx.COLOR_PEACH)
+
+    local txt2 = "press " .. input.mapping_for(input.BTN2) .. " to play again"
+    local txt2_w, txt2_h = usagi.measure_text(txt2)
+    gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2, usagi.GAME_H / 2 - txt2_h / 2 + 14, gfx.COLOR_DARK_PURPLE)
+    gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
+  else
+    -- HUD - bomb bar
+    local bg_color = gfx.COLOR_WHITE
+    if Player.bombable(state.player) then
+      bg_color = gfx.COLOR_RED
+    end
+    gfx.rect_fill(7, 12 - 1, 4 * Bomb.CHIP_COST + 2, 8, bg_color)
+    gfx.rect_fill(8, 12, 4 * Bomb.CHIP_COST, 6, gfx.COLOR_LIGHT_GRAY)
+    gfx.rect_fill(8, 12, 4 * state.player.chip_count, 6, Chip.color)
+
+    gfx.text(time_text, usagi.GAME_W - time_w - 8, 8, gfx.COLOR_WHITE)
+  end
 
   -- dev-only helpers
   if usagi.IS_DEV and state.draw_debug then
