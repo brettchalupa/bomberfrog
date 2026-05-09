@@ -47,7 +47,7 @@ function M.update(dt, c, player, player_firing)
   c.y += c.vel.y * dt
 end
 
-M.color = gfx.COLOR_PEACH
+M.color = gfx.COLOR_YELLOW
 
 function M.draw(c)
   if not c.alive then
