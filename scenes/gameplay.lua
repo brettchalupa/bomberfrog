@@ -34,6 +34,7 @@ function M.init(state)
   state.explosions = {}
   state.pixels = {}
   state.timer = 0
+  state.new_best = false
 
   Starfield.init()
   init_enemies_for_wave(state)
@@ -56,9 +57,19 @@ local function all_enemies_dead(enemies)
   return true
 end
 
+-- call this once when a level is complete to set flag to stop gameplay and save
+-- run time if it's a new best
 local function beat_level(state)
   state.beat_level = true
-  -- TODO: save if new fastest time for that level; save should be scoped for the version/build
+  local run_time = state.timer
+  local best_time = Save.best_time_for(state.level)
+
+  if best_time == nil or run_time < best_time then
+    state.new_best = true
+    Save.save_time(state.level, run_time)
+  else
+    state.new_best = false
+  end
 end
 
 local function try_advance_wave(state)
@@ -241,6 +252,11 @@ function M.draw(dt, state)
   if state.beat_level then
     -- TODO: show if best time
     gfx.text(time_text, usagi.GAME_W - time_w - 8, 8, gfx.COLOR_WHITE)
+    if state.new_best then
+      local best_text = "NEW BEST!"
+      local best_w, _best_h = usagi.measure_text(best_text)
+      gfx.text(best_text, usagi.GAME_W - best_w - 8, 8 * 2 + 4, gfx.COLOR_WHITE)
+    end
 
     local txt = "WON!"
     local txt_w, txt_h = usagi.measure_text(txt)

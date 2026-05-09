@@ -11,13 +11,13 @@ local current_option = 1
 
 function M.init(_state)
   -- music.loop("crystal_menu")
-
-  if usagi.IS_DEV then
-    options[OPTION.PATTERN_TEST] = "Bullet Pattern Test"
-  end
 end
 
 function M.update(dt, _state)
+  if usagi.IS_DEV then
+    options[OPTION.PATTERN_TEST] = "Bullet Pattern Test"
+  end
+
   if input.pressed(input.DOWN) then
     sfx.play("player_shoot_1")
     current_option += 1

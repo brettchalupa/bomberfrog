@@ -8,6 +8,7 @@ Explosion = require("explosion")
 Pixels = require("pixels")
 Starfield = require("starfield")
 Scene = require("scene")
+Save = require("save")
 Metadata = require("metadata")
 
 function _config()
@@ -16,6 +17,8 @@ end
 
 function _init()
   input.set_mouse_visible(false)
+  Save.load()
+
   State = {
     t = 0,
     draw_debug = false,
