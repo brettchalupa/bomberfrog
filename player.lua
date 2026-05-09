@@ -127,7 +127,7 @@ function M.update(dt, p)
     end
     local bullet_idx_3 = find_available_bullet_idx(p.bullets)
     if bullet_idx_3 then
-      p.bullets[bullet_idx_3] = fire(x, p.y + 12, math.rad(SPREAD_DEG))
+      p.bullets[bullet_idx_3] = fire(x, p.y + 14, math.rad(SPREAD_DEG))
     end
   end
 
