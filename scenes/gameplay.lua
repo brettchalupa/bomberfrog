@@ -1,6 +1,7 @@
 local M = {}
 
 local HIT_SFX_MIN_GAP = 0.20 -- 200ms
+local RESTART_DELAY = 0.75   -- prevents accidental restart on death/win
 
 local LEVELS = require("level")
 
@@ -35,6 +36,7 @@ function M.init(state)
   state.pixels = {}
   state.timer = 0
   state.new_best = false
+  state.end_t = 0
 
   Starfield.init()
   init_enemies_for_wave(state)
@@ -190,7 +192,8 @@ function M.update(dt, state)
   update_chips(dt, player)
 
   if not player.alive or state.beat_level then
-    if input.pressed(input.BTN2) then
+    state.end_t += dt
+    if state.end_t > RESTART_DELAY and input.pressed(input.BTN2) then
       sfx.play("confirm")
       M.init(state)
     end
@@ -229,16 +232,21 @@ function M.draw(dt, state)
     Pixels.draw(p)
   end
 
+  local restart_ready = state.end_t > RESTART_DELAY
+  local restart_flash_on = math.floor((state.end_t - RESTART_DELAY) * 2) % 2 == 0
+
   if not state.player.alive then
     local txt = "DEAD!"
     local txt_w, txt_h = usagi.measure_text(txt)
     gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2, usagi.GAME_H / 2 - txt_h / 2, gfx.COLOR_DARK_PURPLE)
     gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2 - 1, usagi.GAME_H / 2 - txt_h / 2 - 1, gfx.COLOR_PEACH)
 
-    local txt2 = "press " .. input.mapping_for(input.BTN2) .. " to restart"
-    local txt2_w, txt2_h = usagi.measure_text(txt2)
-    gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2, usagi.GAME_H / 2 - txt2_h / 2 + 14, gfx.COLOR_DARK_PURPLE)
-    gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
+    if restart_ready and restart_flash_on then
+      local txt2 = "press " .. input.mapping_for(input.BTN2) .. " to restart"
+      local txt2_w, txt2_h = usagi.measure_text(txt2)
+      gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2, usagi.GAME_H / 2 - txt2_h / 2 + 14, gfx.COLOR_DARK_PURPLE)
+      gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
+    end
   end
 
   local time_text = Util.time_str(state.timer)
@@ -258,10 +266,12 @@ function M.draw(dt, state)
     gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2, usagi.GAME_H / 2 - txt_h / 2, gfx.COLOR_DARK_PURPLE)
     gfx.text(txt, usagi.GAME_W / 2 - txt_w / 2 - 1, usagi.GAME_H / 2 - txt_h / 2 - 1, gfx.COLOR_PEACH)
 
-    local txt2 = "press " .. input.mapping_for(input.BTN2) .. " to play again"
-    local txt2_w, txt2_h = usagi.measure_text(txt2)
-    gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2, usagi.GAME_H / 2 - txt2_h / 2 + 14, gfx.COLOR_DARK_PURPLE)
-    gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
+    if restart_ready and restart_flash_on then
+      local txt2 = "press " .. input.mapping_for(input.BTN2) .. " to play again"
+      local txt2_w, txt2_h = usagi.measure_text(txt2)
+      gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2, usagi.GAME_H / 2 - txt2_h / 2 + 14, gfx.COLOR_DARK_PURPLE)
+      gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
+    end
   else
     -- HUD - bomb bar
     local bg_color = gfx.COLOR_WHITE
