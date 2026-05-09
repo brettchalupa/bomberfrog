@@ -129,7 +129,7 @@ function M.update(dt, p)
     end
   end
 
-  if not p.fire_armed and not input.held(ACTION_BTN.spread) and not input.held(ACTION_BTN.focus)
+  if not p.fire_armed and not input.held(ACTION_BTN.spread) and not input.held(ACTION_BTN.focus) then
     p.fire_armed = true
   end
 
