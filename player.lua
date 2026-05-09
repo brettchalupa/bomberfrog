@@ -6,9 +6,17 @@ DIR = {
   LEFT = -1
 }
 
+local ACTION_BTN = {
+  spread = input.BTN1,
+  focus = input.BTN2,
+  bomb = input.BTN3,
+}
+
 local BULLET_SPEED = 600 -- px/s
 local MAX_PLAYER_BULLETS = 12
-local SPREAD_DEG = 4
+local SPREAD_DEG = 6
+local SPEED_DEFAULT = 140 -- px/s
+local SPEED_SLOW = 80     -- px/s
 
 -- returns nil if there are no available bullets, intentional to limit number of
 -- active player bullets and encourage getting closer
@@ -76,6 +84,11 @@ local function try_bomb(p)
   end
 end
 
+-- whether or not the player is firing bullets
+function M.firing()
+  return input.held(ACTION_BTN.spread) or input.held(ACTION_BTN.focus)
+end
+
 function M.update(dt, p)
   assert(p, "player `p` is nil when it shouldn't be")
 
@@ -85,6 +98,13 @@ function M.update(dt, p)
 
   if p.fire_cooldown > 0 then
     p.fire_cooldown -= dt
+  end
+
+  local is_focus = input.held(ACTION_BTN.focus)
+  if is_focus then
+    p.speed = SPEED_SLOW
+  else
+    p.speed = SPEED_DEFAULT
   end
 
   local delta = { x = 0, y = 0 }
@@ -99,7 +119,7 @@ function M.update(dt, p)
     delta.x = 1
   end
 
-  if input.pressed(input.BTN2) then
+  if input.pressed(ACTION_BTN.bomb) then
     try_bomb(p)
   end
 
@@ -109,17 +129,21 @@ function M.update(dt, p)
     end
   end
 
-  if not p.fire_armed and not input.held(input.BTN1) then
+  if not p.fire_armed and not input.held(ACTION_BTN.spread) and not input.held(ACTION_BTN.focus)
     p.fire_armed = true
   end
 
-  if p.fire_armed and p.fire_cooldown <= 0 and input.held(input.BTN1) then
+  if p.fire_armed and p.fire_cooldown <= 0 and (input.held(ACTION_BTN.spread) or is_focus) then
     sfx.play("player_shoot_" .. math.random(1, 4))
     p.fire_cooldown = p.fire_delay
     local x = p.x + 10
+    local spread_deg = SPREAD_DEG
+    if is_focus then
+      spread_deg = 0
+    end
     local bullet_idx = find_available_bullet_idx(p.bullets)
     if bullet_idx then
-      p.bullets[bullet_idx] = fire(x, p.y + 2, math.rad(-SPREAD_DEG))
+      p.bullets[bullet_idx] = fire(x, p.y + 2, math.rad(-spread_deg))
     end
     local bullet_idx_2 = find_available_bullet_idx(p.bullets)
     if bullet_idx_2 then
@@ -127,7 +151,7 @@ function M.update(dt, p)
     end
     local bullet_idx_3 = find_available_bullet_idx(p.bullets)
     if bullet_idx_3 then
-      p.bullets[bullet_idx_3] = fire(x, p.y + 14, math.rad(SPREAD_DEG))
+      p.bullets[bullet_idx_3] = fire(x, p.y + 14, math.rad(spread_deg))
     end
   end
 

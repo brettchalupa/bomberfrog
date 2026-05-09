@@ -90,10 +90,9 @@ local function try_advance_wave(state)
 end
 
 local function update_chips(dt, player)
-  local player_firing = input.held(input.BTN1)
   for i = #State.chips, 1, -1 do
     local c = State.chips[i]
-    Chip.update(dt, c, player, player_firing)
+    Chip.update(dt, c, player, Player.firing())
     if c.alive and player.alive and util.circ_overlap(c, Player.collect_circ(player)) then
       sfx.play("collect_chip_" .. math.random(1, 3))
       local prev_count = player.chip_count
@@ -286,7 +285,7 @@ function M.draw(dt, state)
     gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 240, 10, gfx.COLOR_INDIGO)
 
     if state.player.alive then
-      local r = input.held(input.BTN1) and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
+      local r = Player.firing() and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
       gfx.circ(state.player.x + SPR_SIZE / 2, state.player.y + SPR_SIZE / 2, r, gfx.COLOR_YELLOW)
     end
   end
