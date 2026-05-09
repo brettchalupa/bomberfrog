@@ -63,6 +63,14 @@ function M.draw(dt, _state)
   gfx.text(eng_credit, usagi.GAME_W - eng_credit_w - padding, usagi.GAME_H - eng_credit_h - padding,
     gfx.COLOR_LIGHT_GRAY)
 
+  -- NOTE: hardcoded to level 1 for the alpha
+  local best_time = Save.best_time_for(1)
+  if best_time then
+    local bt_text = "Fastest clear: " .. Util.time_str(best_time)
+    local bt_text_w = usagi.measure_text(bt_text)
+    gfx.text(bt_text, usagi.GAME_W - bt_text_w - 10, 10, gfx.COLOR_PINK)
+  end
+
   for i = 1, #options do
     local value = options[i]
     local y = 30 + i * 24

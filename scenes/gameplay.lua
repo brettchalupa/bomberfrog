@@ -57,14 +57,18 @@ local function all_enemies_dead(enemies)
   return true
 end
 
+local function is_below_best(state)
+  local best_time = Save.best_time_for(state.level)
+  return best_time == nil or state.timer < best_time
+end
+
 -- call this once when a level is complete to set flag to stop gameplay and save
 -- run time if it's a new best
 local function beat_level(state)
   state.beat_level = true
   local run_time = state.timer
-  local best_time = Save.best_time_for(state.level)
 
-  if best_time == nil or run_time < best_time then
+  if is_below_best(state) then
     state.new_best = true
     Save.save_time(state.level, run_time)
   else
@@ -104,14 +108,6 @@ local function update_chips(dt, player)
       table.remove(State.chips, i)
     end
   end
-end
-
--- (M:SS.cc speedrun format)
-local function time_str(time)
-  local minutes = math.floor(time / 60)
-  local seconds = math.floor(time % 60)
-  local centis = math.floor(time * 100) % 100
-  return string.format("%d:%02d.%02d", minutes, seconds, centis)
 end
 
 function M.update(dt, state)
@@ -246,7 +242,7 @@ function M.draw(dt, state)
     gfx.text(txt2, usagi.GAME_W / 2 - txt2_w / 2 - 1, usagi.GAME_H / 2 - txt2_h / 2 + 14 - 1, gfx.COLOR_PEACH)
   end
 
-  local time_text = time_str(state.timer)
+  local time_text = Util.time_str(state.timer)
   local time_w, _time_h = usagi.measure_text(time_text)
 
   if state.beat_level then
@@ -277,7 +273,12 @@ function M.draw(dt, state)
     gfx.rect_fill(8, 12, 4 * Bomb.CHIP_COST, 6, gfx.COLOR_LIGHT_GRAY)
     gfx.rect_fill(8, 12, 4 * state.player.chip_count, 6, Chip.color)
 
-    gfx.text(time_text, usagi.GAME_W - time_w - 8, 8, gfx.COLOR_WHITE)
+    local below_best = is_below_best(state)
+    local time_color = gfx.COLOR_WHITE
+    if not below_best then
+      time_color = gfx.COLOR_RED
+    end
+    gfx.text(time_text, usagi.GAME_W - time_w - 8, 8, time_color)
   end
 
   -- dev-only helpers

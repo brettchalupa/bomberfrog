@@ -9,7 +9,9 @@ function M.load()
 end
 
 local function save()
-  save_data.version = Metadata.version
+  -- NOTE: save the build so we clear clear alpha save data for beta build and
+  -- final release
+  save_data.build = Metadata.build
   usagi.save(save_data)
 end
 

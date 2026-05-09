@@ -10,6 +10,7 @@ Starfield = require("starfield")
 Scene = require("scene")
 Save = require("save")
 Metadata = require("metadata")
+Util = require("util")
 
 function _config()
   return { name = "BOMBERFROG", game_id = "com.brettmakesgames.bomberfrog" }
