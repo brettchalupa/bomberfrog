@@ -201,6 +201,11 @@ function M.update(dt, state)
     if input.key_pressed(input.KEY_0) then
       state.draw_debug = not state.draw_debug
     end
+
+    if input.key_pressed(input.KEY_EQUAL) then
+      state.wave += 1
+      init_enemies_for_wave(state)
+    end
   end
 end
 
