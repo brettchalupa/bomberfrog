@@ -245,7 +245,7 @@ function M.draw(e)
     gfx.circ_fill(e.x, e.y, 2, e.color)
 
     if e.alt_seq_active then
-      gfx.circ_fill(e.x, e.y, 12, gfx.COLOR_ORANGE)
+      gfx.circ_fill(e.x, e.y, e.r, gfx.COLOR_GREEN)
     end
   end
 
