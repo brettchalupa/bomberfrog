@@ -139,6 +139,9 @@ function M.hit(e, dmg)
   dmg = dmg or 1
   e.hit_timer = HIT_FLASH_TIME
   e.hp -= dmg
+  -- shrink enemies as they take damage, with a minimum radius of 6px
+  e.r -= 0.10
+  e.r = math.max(e.r, 6)
   if e.hp <= 0 then
     sfx.play(e.death_sfx or "popcorn_death")
     e.alive = false
