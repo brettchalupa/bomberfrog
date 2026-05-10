@@ -2,10 +2,12 @@ local M = {}
 
 local OPTION = {
   PLAY = 1,
-  PATTERN_TEST = 2,
+  MOVEMENT_TEST = 2,
+  PATTERN_TEST = 3,
 }
 local options = {
   [OPTION.PLAY] = "Play",
+  [OPTION.MOVEMENT_TEST] = "Player Test",
 }
 local current_option = 1
 
@@ -39,6 +41,8 @@ function M.update(dt, _state)
       Scene.switch_to(Scene.KEY.GAMEPLAY)
     elseif current_option == OPTION.PATTERN_TEST then
       Scene.switch_to(Scene.KEY.PATTERN_TEST)
+    elseif current_option == OPTION.MOVEMENT_TEST then
+      Scene.switch_to(Scene.KEY.MOVEMENT_TEST)
     end
   end
 end
