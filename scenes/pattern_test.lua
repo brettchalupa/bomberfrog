@@ -56,13 +56,14 @@ end
 function M.draw(dt, _state)
   gfx.clear(gfx.COLOR_DARK_BLUE)
   gfx.text("BULLET PATTERN TEST", 10, 10, gfx.COLOR_WHITE)
+  gfx.text("nums spawn enemies", 10, 20, gfx.COLOR_LIGHT_GRAY)
 
   local player = PatternTestState.player
   Player.draw(dt, player)
 
   Enemy.draw(PatternTestState.current_enemy)
 
-  gfx.text(PatternTestState.current_enemy.name, 200, 10, gfx.COLOR_BLACK)
+  gfx.text(PatternTestState.current_enemy.name, 200, 10, gfx.COLOR_PEACH)
   gfx.text("sequence_idx: " .. PatternTestState.current_enemy.sequence_idx, 200, 20, gfx.COLOR_DARK_GREEN)
 end
 
