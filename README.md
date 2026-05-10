@@ -9,6 +9,11 @@ Horizontal wave-based shmup by Brett Chalupa made with
 
 Music by [Zach "Chromatic Arcana" Link](https://www.chromaticarcana.com/).
 
+Tracks used:
+
+- [Fire Horse](https://soundcloud.com/chromaticarcana/fire-horse-1)
+- [Crystal Menu](https://soundcloud.com/chromaticarcana/crystal-menu)
+
 ## Developing
 
 Run `usagi dev` to boot up the dev server.
