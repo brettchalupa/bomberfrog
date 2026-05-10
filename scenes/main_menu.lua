@@ -46,7 +46,7 @@ end
 
 function M.draw(dt, _state)
   local padding = 10
-  gfx.clear(gfx.COLOR_DARK_PURPLE)
+  gfx.clear(gfx.COLOR_DARK_GREEN)
   gfx.text("BOMBERFROG", padding, padding, gfx.COLOR_WHITE)
   gfx.text("your bomb is your life!", padding, 20, gfx.COLOR_LIGHT_GRAY)
   gfx.spr(1, 72, 7)
