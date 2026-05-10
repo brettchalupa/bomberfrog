@@ -41,12 +41,10 @@ function M.init(state)
   Starfield.init()
   init_enemies_for_wave(state)
 
-  -- if not State.music_started then
-  --   state.music_started = true
-  -- music.loop("run")
-  -- music.loop("fire_horse")
-  -- music.loop("sax_loops")
-  -- end
+  if not State.music_started then
+    state.music_started = true
+    music.loop("fire_horse")
+  end
 end
 
 local function all_enemies_dead(enemies)

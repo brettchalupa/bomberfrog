@@ -7,6 +7,8 @@
 Horizontal wave-based shmup by Brett Chalupa made with
 [Usagi Engine](https://usagiengine).
 
+Music by [Zach "Chromatic Arcana" Link](https://www.chromaticarcana.com/).
+
 ## Developing
 
 Run `usagi dev` to boot up the dev server.
@@ -19,4 +21,6 @@ Dev mode shortcuts:
 
 ## (Un)license
 
-Bomberfrog is released into the public domain.
+Bomberfrog's code and sound effects are released into the public domain.
+
+The music used in the game is copyright Zach Link and **not** in the public domain. Used with permission.

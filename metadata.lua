@@ -1,5 +1,5 @@
 local M = {
-  build = "alpha.1-dev"
+  build = "alpha-dev"
 }
 
 return M

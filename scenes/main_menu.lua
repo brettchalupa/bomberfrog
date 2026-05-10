@@ -10,7 +10,7 @@ local options = {
 local current_option = 1
 
 function M.init(_state)
-  -- music.loop("crystal_menu")
+  music.loop("crystal_menu")
 end
 
 function M.update(dt, _state)
@@ -55,7 +55,12 @@ function M.draw(dt, _state)
 
   local dev_credit = "game by Brett Chalupa"
   local dev_credit_w, dev_credit_h = usagi.measure_text(dev_credit)
-  gfx.text(dev_credit, usagi.GAME_W - dev_credit_w - padding, usagi.GAME_H - dev_credit_h * 2 - padding - 4,
+  gfx.text(dev_credit, usagi.GAME_W - dev_credit_w - padding, usagi.GAME_H - dev_credit_h * 3 - padding - 8,
+    gfx.COLOR_LIGHT_GRAY)
+
+  local music_credit = "music by Chromatic Arcana"
+  local music_credit_w, music_credit_h = usagi.measure_text(music_credit)
+  gfx.text(music_credit, usagi.GAME_W - music_credit_w - padding, usagi.GAME_H - music_credit_h * 2 - padding - 4,
     gfx.COLOR_LIGHT_GRAY)
 
   local eng_credit = "made with USAGI ENGINE"
