@@ -214,6 +214,12 @@ function M.draw(dt, state)
     Chip.draw(state.chips[i])
   end
 
+  -- show chip ring around player
+  if state.player.alive then
+    local r = Player.firing() and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
+    gfx.circ(state.player.x + SPR_SIZE / 2, state.player.y + SPR_SIZE / 2, r, gfx.COLOR_YELLOW)
+  end
+
   Player.draw(dt, state.player)
 
   for i = 1, #state.enemies do
@@ -293,11 +299,6 @@ function M.draw(dt, state)
   -- dev-only helpers
   if usagi.IS_DEV and state.draw_debug then
     gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 240, 10, gfx.COLOR_INDIGO)
-
-    if state.player.alive then
-      local r = Player.firing() and Chip.PULL_RADIUS_FIRING or Chip.PULL_RADIUS_IDLE
-      gfx.circ(state.player.x + SPR_SIZE / 2, state.player.y + SPR_SIZE / 2, r, gfx.COLOR_YELLOW)
-    end
   end
 end
 
