@@ -13,7 +13,12 @@ Metadata = require("metadata")
 Util = require("util")
 
 function _config()
-  return { name = "BOMBERFROG", game_id = "com.brettmakesgames.bomberfrog", icon = 1 }
+  return {
+    name = "BOMBERFROG",
+    game_id = "com.brettmakesgames.bomberfrog",
+    icon = 1,
+    pixel_perfect = true,
+  }
 end
 
 function _init()
