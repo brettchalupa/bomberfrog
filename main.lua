@@ -17,7 +17,7 @@ function _config()
     name = "BOMBERFROG",
     game_id = "com.brettmakesgames.bomberfrog",
     icon = 1,
-    pixel_perfect = true,
+    pixel_perfect = false,
   }
 end
 
