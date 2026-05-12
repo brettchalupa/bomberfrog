@@ -5,13 +5,11 @@
 DRY_RUN = ARGV.include?("--dry-run")
 
 def butler_push(build)
-  butler_cmd_main = "butler push export/bomberfrog-#{build}.zip brettchalupa/bomberfrog:#{build}"
-  butler_cmd_alpha = "butler push export/bomberfrog-#{build}.zip brettchalupa/bomberfrog-alpha:#{build}"
+  butler_cmd = "butler push export/bomberfrog-#{build}.zip brettchalupa/bomberfrog:#{build}"
   if DRY_RUN
-    puts "[DRY RUN] pushing to itch: #{butler_cmd_main}"
+    puts "[DRY RUN] pushing to itch: #{butler_cmd}"
   else
-    system(butler_cmd_main)
-    system(butler_cmd_alpha)
+    system(butler_cmd)
   end
 end
 
