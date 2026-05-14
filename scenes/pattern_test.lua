@@ -44,7 +44,7 @@ function M.update(dt, _state)
     end
   end
 
-  if input.pressed(input.BTN2) then
+  if input.pressed(input.BTN3) then
     sfx.play("confirm")
     Scene.switch_to(Scene.KEY.MAIN_MENU)
   end
