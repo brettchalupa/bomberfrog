@@ -8,6 +8,7 @@ local DEST = {
 -- Table of levels, which contain waves, which are tables of enemy configurations
 return {
   [1] = {
+    background = "space",
     waves = {
       {
         {
@@ -145,6 +146,17 @@ return {
           dest = DEST[3]
         },
       },
+    },
+  }, -- level 1 end
+  [2] = {
+    background = "city",
+    waves = {
+      {
+        {
+          kind = Enemy.kind.popcorn,
+          dest = DEST[3]
+        },
+      },
     }
-  }
+  }, -- level 2 end
 }

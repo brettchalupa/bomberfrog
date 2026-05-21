@@ -5,13 +5,19 @@ local RESTART_DELAY = 0.75   -- prevents accidental restart on death/win
 
 local LEVELS = require("level")
 
+local function current_level(state)
+  local level = LEVELS[state.level]
+  assert(level, "nil level for " .. state.level)
+  return level
+end
+
 local function init_enemies_for_wave(state)
-  local level_idx = state.level
+  local level = current_level(state)
+
   local wave_idx = state.wave
-  local level = LEVELS[level_idx]
-  assert(level, "expected non-nil level for idx: " .. level_idx)
   local wave = level.waves[wave_idx]
   assert(wave, "expected non-nil wave for idx: " .. wave_idx)
+
   local enemies = {}
 
   for i = 1, #wave do
@@ -22,11 +28,14 @@ local function init_enemies_for_wave(state)
   state.enemies = enemies
 end
 
-
 function M.init(state)
-  state.level = 1
+  if state.level == nil then
+    state.level = 1
+  end
+  local level = current_level(state)
   state.beat_level = false
   state.wave = 1
+  state.background = level.background
   state.player = Player.init()
   state.last_hit_sfx_t = 0
   state.enemies = {}
@@ -202,16 +211,46 @@ function M.update(dt, state)
       state.draw_debug = not state.draw_debug
     end
 
+    -- wave shortcuts
     if input.key_pressed(input.KEY_EQUAL) then
-      state.wave += 1
+      if state.wave < #current_level(state).waves then
+        state.wave += 1
+      end
       init_enemies_for_wave(state)
+    end
+    if input.key_pressed(input.KEY_MINUS) then
+      if state.wave > 1 then
+        state.wave -= 1
+      end
+      init_enemies_for_wave(state)
+    end
+
+    -- level shortcuts
+    if input.key_pressed(input.KEY_9) then
+      if state.level < #LEVELS then
+        state.level += 1
+      end
+      M.init(state)
+    end
+    if input.key_pressed(input.KEY_8) then
+      if state.level > 1 then
+        state.level -= 1
+      end
+      M.init(state)
     end
   end
 end
 
 function M.draw(dt, state)
-  gfx.clear(gfx.COLOR_DARK_BLUE)
-  Starfield.draw()
+  if state.background == "space" then
+    gfx.clear(gfx.COLOR_DARK_BLUE)
+    Starfield.draw()
+  elseif state.background == "city" then
+    gfx.clear(gfx.COLOR_DARK_GRAY)
+    -- TODO: city scrolling by
+  else
+    gfx.clear(gfx.COLOR_DARK_PURPLE)
+  end
 
   for i = 1, #state.chips do
     Chip.draw(state.chips[i])
@@ -262,7 +301,6 @@ function M.draw(dt, state)
   local time_w, _time_h = usagi.measure_text(time_text)
 
   if state.beat_level then
-    -- TODO: show if best time
     gfx.text(time_text, usagi.GAME_W - time_w - 8, 8, gfx.COLOR_WHITE)
     if state.new_best then
       local best_text = "NEW BEST!"
@@ -301,7 +339,7 @@ function M.draw(dt, state)
 
   -- dev-only helpers
   if usagi.IS_DEV and state.draw_debug then
-    gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 240, 10, gfx.COLOR_INDIGO)
+    gfx.text("lvl:" .. state.level .. ",wve:" .. state.wave, 180, 8, gfx.COLOR_INDIGO)
   end
 end
 
